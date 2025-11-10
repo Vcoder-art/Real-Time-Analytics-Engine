@@ -1,0 +1,27 @@
+ ┌────────────┐
+ │ analytics.proto │
+ └──────┬───────┘
+        │ compiled by
+        ▼
+ ┌──────────────────────┐
+ │ tonic-prost-build    │   ← build.rs (compile-time)
+ │   uses prost + protoc│
+ └────────┬─────────────┘
+          │ outputs Rust code
+          ▼
+ ┌──────────────────────┐
+ │ Generated analytics.rs│
+ └────────┬─────────────┘
+          │ used at runtime by
+          ▼
+ ┌────────────────────────────────┐
+ │ tonic (grpc runtime) + tonic-prost │
+ │ prost (serialize/deserialize) │
+ └────────────────────────────────┘
+
+| Crate                 | Purpose                                   | Used Where |
+| --------------------- | ----------------------------------------- | ---------- |
+| **prost**             | Encodes/decodes protobuf messages         | runtime    |
+| **tonic**             | gRPC networking runtime                   | runtime    |
+| **tonic-prost**       | Provides ProstCodec to link tonic + prost | runtime    |
+| **tonic-prost-build** | Generates Rust code from .proto files     | build-time |

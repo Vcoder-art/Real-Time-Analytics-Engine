@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package analytics;
+
+message DailyActiveUsersRequest {
+  string company_id = 1;
+  string app_id = 2;
+  int32 days = 3; // last N days
+}
+
+message DayCount {
+    string date = 1; // YYYY-MM-DD
+    uint64 count = 2;
+}
+
+message DailyActiveUsersResponse {
+  repeated DayCount data = 1;
+}
+
+
+message EventTrend {
+  string date = 1;
+  string event_name = 2;
+  int64 count = 3;
+}
+
+message EventTrendRequest {
+  string company_id = 1;
+  string app_id = 2;
+  int32 days = 3;
+}
+
+message EventTrendResponse {
+  repeated EventTrend data = 1;
+}
+
+message TopEventsRequest {
+  string company_id = 1;
+  string app_id = 2;
+  int32 limit = 3;
+}
+
+message EventCount {
+    string event_name = 1;
+    uint64 count = 2;
+}
+
+message TopEventsResponse {
+  repeated EventCount data = 1;
+}
+
+
+// A single event sent by Node SDK
+message Event {
+  string event_name = 2;
+  string timestamp = 5;
+  string payload_json = 6;
+}
+
+// ---- Batch wrapper ----
+message EventBatch {
+  string company_id = 1;
+  string app_id = 2;
+  string user_id = 3;
+  repeated Event events = 4;   // multiple events sent together
+}
+
+
+// Response from server
+message SaveEventResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+
+message GetCountRequest {
+  string company_id = 1;
+  string app_id = 2;
+  optional string user_id = 3; 
+}
+
+message GetCountResponse {
+  uint64 count = 1;
+}
+
+// The gRPC service definition
+service AnalyticsService {
+  rpc SaveEvent (EventBatch) returns (SaveEventResponse);
+  rpc GetEventCount(GetCountRequest) returns (GetCountResponse);
+  rpc GetDailyActiveUsers(DailyActiveUsersRequest) returns (DailyActiveUsersResponse);
+  rpc GetEventTrends(EventTrendRequest) returns (EventTrendResponse);
+  rpc GetTopEvents(TopEventsRequest) returns (TopEventsResponse);
+}

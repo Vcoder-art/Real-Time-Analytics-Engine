@@ -1,0 +1,5 @@
+1-> @grpc/grpc-js → modern JS gRPC implementation
+
+//“proto-loader converts protobuf definitions into something Node can use to generate service clients.”
+2-> @grpc/proto-loader -> loads .proto definitions dynamically
+

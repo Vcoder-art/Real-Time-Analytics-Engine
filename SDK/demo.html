@@ -1,0 +1,19 @@
+<html>
+  <head><title>Analytics SDK Test</title></head>
+  <body>
+    <button id="track">Track Event</button>
+    <script type="module" >
+      import Analytics from "/dist/index.js"
+      const sdk = new Analytics({
+        apiUrl: "http://localhost:4000/api/events/save-events", // your mock API
+        apiKey: "pk_2332b83f4c84d73e1884c0bb03e80d71c0e5b0fef87de08461c07818106fac58",
+        userId: "user-12356",
+        debug: true,
+      });
+
+      document.getElementById("track").addEventListener("click", () => {
+        sdk.track("button_clicked", { time: new Date().toISOString() });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+
+Frontend / SDK  --->  Node Backend  --->  Rust Analytics Service  --->  Postgres
+          (HTTP)            (gRPC)       

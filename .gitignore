@@ -1,0 +1,87 @@
+# ----------------------------
+# Global ignores
+# ----------------------------
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.env
+.env.*
+node_modules/
+dist/
+coverage/
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# ----------------------------
+# Node Server (Express/Nest)
+# ----------------------------
+node-server/node_modules/
+node-server/dist/
+node-server/.env
+node-server/coverage/
+node-server/npm-debug.log*
+
+# ----------------------------
+# Rust Analytics (Rust gRPC)
+# ----------------------------
+rust-analytics/target/
+rust-analytics/Cargo.lock
+rust-analytics/.env
+rust-analytics/*.rs.bk
+rust-analytics/.idea/
+rust-analytics/.vscode/
+
+# ----------------------------
+# SDK (TypeScript Web SDK)
+# ----------------------------
+SDK/node_modules/
+SDK/dist/
+SDK/.env
+SDK/.turbo/
+SDK/.next/
+SDK/coverage/
+SDK/*.log
+SDK/package-lock.json
+
+# ----------------------------
+# Proto Contracts
+# ----------------------------
+proto-contract/*.pb.go
+proto-contract/*.pb.rs
+proto-contract/*.pb.ts
+proto-contract/target/
+proto-contract/dist/
+proto-contract/.idea/
+proto-contract/.vscode/
+
+# ----------------------------
+# System / OS generated files
+# ----------------------------
+*.DS_Store
+ehthumbs.db
+Icon?
+*.lnk
+
+# ----------------------------
+# Miscellaneous
+# ----------------------------
+*.iml
+*.sublime-workspace
+*.sublime-project
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+lerna-debug.log
+
+# ----------------------------
+# Build artifacts
+# ----------------------------
+target/
+out/
+build/
+tmp/
+.cache/
