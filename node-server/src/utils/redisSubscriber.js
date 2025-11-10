@@ -45,8 +45,8 @@ class RedisSubscriber {
         const data = JSON.parse(message);
         const query = new RustQuery();
         const response = await query.getCountOfEventsByApp(data.company_id,data.app_id);
-        const response2 = await query.getDailyActiveUsers(data.company_id,data.app_id,3);
-        const response3 = await query.getTrendingEvents(data.company_id,data.app_id,3);
+        const response2 = await query.getDailyActiveUsers(data.company_id,data.app_id,5);
+        const response3 = await query.getTrendingEvents(data.company_id,data.app_id,5);
 
         console.log("event   count",response);
         console.log("daily active users",response2);

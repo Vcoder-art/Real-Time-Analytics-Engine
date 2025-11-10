@@ -158,4 +158,6 @@ impl Store {
 
         Ok(trends)
     }
+
+    
 }
