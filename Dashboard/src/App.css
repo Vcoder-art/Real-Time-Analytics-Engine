@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+
+.img-dashboard {
+    width:50%;
+    height:50%
+}
