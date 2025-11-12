@@ -1,5 +1,5 @@
 const ApiKeyModel = require("../models/api.key.model");
-const { redisSubscriber } = require("../utils/redisSubscriber");
+// const { redisSubscriber } = require("../utils/redisSubscriber");
 
 async function getAppChannelsByCompanyId(req, res) {
   try {
@@ -33,32 +33,32 @@ async function getAppChannelsByCompanyId(req, res) {
   }
 }
 
-async function subscribeApp(req, res) {
-  try {
-    const { appId } = req.body;
+// async function subscribeApp(req, res) {
+//   try {
+//     const { appId } = req.body;
 
-    if (!appId) {
-      return res.status(400).json({ error: "app id is required" });
-    }
+//     if (!appId) {
+//       return res.status(400).json({ error: "app id is required" });
+//     }
 
-    const app = await ApiKeyModel.findOne({ appId }).select("appId");
+//     const app = await ApiKeyModel.findOne({ appId }).select("appId");
 
-    if (!app) {
-      return res.status(404).json({ error: "App not found." });
-    }
+//     if (!app) {
+//       return res.status(404).json({ error: "App not found." });
+//     }
 
-    const channelName = `analytics:company:${req.companyId}:app:${appId}`;
+//     const channelName = `analytics:company:${req.companyId}:app:${appId}`;
 
-    await redisSubscriber.subscribe(channelName, "");
+//     await redisSubscriber.subscribe(channelName, "");
 
-    return res.json({
-      success: true,
-      message: `Subscribed to channel ${channelName}`,
-    });
-  } catch (err) {
-    console.error("❌ Subscription error:", err);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-}
+//     return res.json({
+//       success: true,
+//       message: `Subscribed to channel ${channelName}`,
+//     });
+//   } catch (err) {
+//     console.error("❌ Subscription error:", err);
+//     return res.status(500).json({ success: false, error: err.message });
+//   }
+// }
 
-module.exports = { getAppChannelsByCompanyId,subscribeApp };
+module.exports = { getAppChannelsByCompanyId };

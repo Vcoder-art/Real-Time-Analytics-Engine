@@ -3,8 +3,14 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const routes = require("./src/routes");
-const app = express();
+const { WebSocketGateway } = require("./src/ws/wsServer");
+const http = require("http");
 
+const app = express();
+const server = http.createServer(app);
+
+// Initialize WebSocket gateway
+new WebSocketGateway(server);
 
 dotenv.config();
 app.use(cors());
@@ -20,7 +26,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
-    app.listen(4000, () => {
+    server.listen(4000, () => {
       console.log("✅ Server started on port 4000");
     });
   })

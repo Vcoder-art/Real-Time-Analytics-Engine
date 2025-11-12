@@ -3,5 +3,5 @@ const {getAppChannelsByCompanyId,subscribeApp} = require("../controllers/channel
 const authMiddleware = require("../middlewares/auth.validations")
 
 Router.get("/get-app-channels",authMiddleware, getAppChannelsByCompanyId)
-Router.post("/subscribe-app-channel",authMiddleware,subscribeApp)
+// Router.post("/subscribe-app-channel",authMiddleware,subscribeApp)
 module.exports = Router;
