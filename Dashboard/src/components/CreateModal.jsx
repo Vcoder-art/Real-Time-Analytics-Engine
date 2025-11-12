@@ -1,6 +1,6 @@
 // src/components/CreateAppModal.jsx
 import { useState } from "react";
-import axiosInstance from ".././apis/axiosInstance";
+import {createApiKeysHttp} from "../features/slices/publicKeysService"
 
 export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
   const [appName, setAppName] = useState("");
@@ -17,10 +17,10 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
     setResult(null);
 
     try {
-      const res = await axiosInstance.post("/apps/create", { appName });
-      if (res.data.success) {
-        setResult(res.data);
-        onAppCreated && onAppCreated(res.data);
+      const data = await createApiKeysHttp(appName)
+      if (data.success) {
+        setResult(data);
+        onAppCreated && onAppCreated(data);
       } else {
         setError("Failed to create app. Try again.");
       }
@@ -57,7 +57,8 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
+              style={{color:"black"}}
+              className="w-full bg-blue-600 hover:bg-blue-700  py-2 rounded-lg"
             >
               {loading ? "Creating..." : "Create App"}
             </button>
@@ -68,8 +69,9 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
             <h3 className="text-lg font-medium text-green-400">✅ App Created!</h3>
             <p><strong>App ID:</strong> {result.appId}</p>
             <p><strong>App Name:</strong> {result.appName}</p>
-            <p><strong>API Key:</strong> <span className="text-blue-400">{result.apiKey}</span></p>
+            <p><strong>API Key:</strong> <span className="text-blue-400">{result.apiKey.slice(0,20)} ...</span></p>
             <button
+              color="black"
               onClick={onClose}
               className="mt-4 w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-lg"
             >
