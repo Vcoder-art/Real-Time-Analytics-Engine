@@ -1,0 +1,54 @@
+class WebSocketService {
+  constructor() {
+    this.ws = null;
+    this.callbacks = new Map();
+  }
+
+  connect() {
+    return new Promise((res, rej) => {
+    //   console.log(this.ws);
+    //   console.log(this.ws.readyState)
+    //   console.log(WebSocket.OPEN)
+      if (this.ws && this.ws.readyState === WebSocket.OPEN)
+        rej("Websocket not define");
+      this.ws = new WebSocket("ws://localhost:4000");
+      this.ws.onopen = () => res("WS Connected");
+      this.ws.onclose = () => console.log("WS Disconnected");
+      this.ws.onerror = (err) => rej("WS Error:", err);
+
+      this.ws.onmessage = (msg) => {
+        try {
+          const data = JSON.parse(msg.data);
+
+          //real time messages
+
+          if (data.channel && this.callbacks.has(data.channel)) {
+            this.callbacks.get(data.channel)(data);
+          }
+        } catch (e) {
+          console.log("Non JSON:", msg.data);
+          console.log("Error", e);
+        }
+      };
+    });
+  }
+
+  async subscribe(channel, callback) {
+    try {
+      await this.connect();
+      this.callbacks.set(channel, callback);
+      this.ws.send(JSON.stringify({ action: "subscribe", channel }));
+    } catch (Err) {
+      console.log(Err);
+    }
+  }
+
+  unsubscribe(channel) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+
+    this.ws.send(JSON.stringify({ action: "unsubscribe", channel }));
+    this.callbacks.delete(channel);
+  }
+}
+
+export const ws = new WebSocketService();

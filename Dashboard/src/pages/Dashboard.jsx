@@ -12,7 +12,7 @@ import AppDetailsCard from "../components/AppDetailsCard";
 export default function Dashboard() {
     const { user } = useSelector((state) => state.auth);
     const [channels, setChannels] = useState([]);
-    const [selectedApp,setSelectedApp] = useState(null)
+    const [selectedApp, setSelectedApp] = useState(null)
     const [isCreatingApp, setIsCreatingApp] = useState(false);
 
     const navigate = useNavigate();
@@ -77,7 +77,7 @@ export default function Dashboard() {
                     <h2 className="text-lg font-semibold mb-4">Your Apps</h2>
                     <ul className="space-y-3">
 
-                        {channels.map(ch => <li onClick={()=>setSelectedApp(ch)} className="p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition">
+                        {channels.map(ch => <li onClick={() => setSelectedApp(ch)} className="p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition">
                             {/* <Layers className="inline-block w-4 h-4 mr-2 text-blue-400" /> */}
                             {ch.appName}
                         </li>)}
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
                 {/* Main Content */}
                 <section className="col-span-9 bg-gray-900 rounded-2xl p-8 shadow-lg">
-                  <AppDetailsCard app={selectedApp} />
+                    <AppDetailsCard app={selectedApp} />
                 </section>
             </main>
         </div>

@@ -39,7 +39,7 @@ class WebSocketGateway {
       if (!clients) return;
 
       const { app_id, company_id, user_id } = JSON.parse(message.toString());
-      console.log(app_id, company_id, user_id);
+      // console.log(app_id, company_id, user_id);
       let query = new RustQuery();
       let data = await query.getDailyActiveUsers(company_id, app_id, 20);
       let data2 = await query.getTrendingEvents(company_id, app_id, 20);

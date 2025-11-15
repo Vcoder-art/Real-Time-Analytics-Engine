@@ -1,35 +1,35 @@
 // src/components/AppDetailsCard.jsx
 import { useState } from "react";
 import axiosInstance from "../apis/axiosInstance";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { ws } from "../services/ws"
+
 
 export default function AppDetailsCard({ app, companyId }) {
     const [subscribed, setSubscribed] = useState(false);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     if (!app) {
         return null;
     }
 
-    console.log(app)
-
-    const handleSubscribe = async () => {
-        setLoading(true);
-        try {
-            const res = await axiosInstance.post("/apps/subscribe", {
-                companyId,
-                appId: app.appId,
-            });
-            if (res.data.success) {
-                setSubscribed(true);
-            }
-        } catch (error) {
-            console.error("Subscription failed", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const handleSubscribe = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const res = await axiosInstance.post("/apps/subscribe", {
+    //             companyId,
+    //             appId: app.appId,
+    //         });
+    //         if (res.data.success) {
+    //             setSubscribed(true);
+    //         }
+    //     } catch (error) {
+    //         console.error("Subscription failed", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     return (
         <div className="bg-gray-900 border border-gray-800 rounded-xl shadow-lg p-6 transition-all hover:shadow-blue-500/20 hover:border-blue-500/30">
@@ -53,27 +53,24 @@ export default function AppDetailsCard({ app, companyId }) {
             </div>
 
             <div style={{ width: "10%" }} className="flex justify-between mt-6 space-x-2">
-                {!subscribed ? (
-                    <button
-                        style={{ color: "black" }}
-                        onClick={handleSubscribe}
-                        disabled={loading}
-                        className={`flex-1 py-2.5 rounded-lg font-medium transition-colors ${loading
-                            ? "bg-blue-400 cursor-not-allowed text-gray-200"
-                            : "bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-blue-500/30"
-                            }`}
-                    >
-                        {loading ? "Subscribing..." : "Subscribe"}
-                    </button>
-                ) : (
-                    <button
-                        disabled
-                        style={{ color: "black" }}
-                        className="flex-1 py-2.5 rounded-lg font-medium bg-emerald-600 text-white shadow-md cursor-default"
-                    >
-                        Subscribed ✓
-                    </button>
-                )}
+
+                <button
+                    style={{ color: "black" }}
+                    onClick={() => {
+                        ws.subscribe(app.channel, (event) => {
+                            console.log("🔵 Event Received:", event);
+                        });
+                        setSubscribed(true);
+                    }}
+                    // disabled={subscribed}
+                    className={`flex-1 py-2.5 rounded-lg font-medium transition-colors ${loading
+                        ? "bg-blue-400 cursor-not-allowed text-gray-200"
+                        : "bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-blue-500/30"
+                        }`}
+                >
+                   {subscribed ? "Subscribed ✓" : "Subscribe"}
+                </button>
+
             </div>
 
         </div>

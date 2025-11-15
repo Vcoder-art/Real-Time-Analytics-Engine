@@ -2,7 +2,7 @@ const { analyticsClient } = require("../grpc/client");
 
 async function saveEvents(req, res) {
   const { events, userid } = req.body;
-
+  
   if (!Array.isArray(events) || events.length === 0) {
     return res.status(400).json({ msg: "events array is required" });
   }
