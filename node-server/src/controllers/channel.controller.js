@@ -4,7 +4,7 @@ const ApiKeyModel = require("../models/api.key.model");
 async function getAppChannelsByCompanyId(req, res) {
   try {
     const apps = await ApiKeyModel.find({ company: req.companyId }).select(
-      "appId appName key"
+      "appId appName key company"
     );
 
     if (!apps.length) {
@@ -20,7 +20,8 @@ async function getAppChannelsByCompanyId(req, res) {
       appId: app.appId,
       appName: app.appName,
       channel: `analytics:company:${req.companyId}:app:${app.appId}`,
-      apiKey: app.key
+      apiKey: app.key,
+      company:app.company
     }));
 
     res.status(200).json({

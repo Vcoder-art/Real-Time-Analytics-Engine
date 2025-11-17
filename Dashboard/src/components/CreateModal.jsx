@@ -26,17 +26,35 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
       }
     } catch (err) {
       console.error(err);
-      setError("Error creating app.");
+      setError(err?.response?.data?.msg? err.response.data.msg  : "Error creating app.");
     } finally {
       setLoading(false);
     }
   };
 
+  const closeModal = () => {
+    setResult(null)
+    setError(null)
+    setAppName("")
+    onClose()
+  }
+
+  const appNameHandler = (e) => {
+    const value = e.target.value;
+    
+    let regex = new RegExp('^[A-Za-z0-9_-]+$');
+    if(regex.test(value) || value == ""){
+      setAppName(value)
+    }
+    
+
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="bg-gray-900 text-white rounded-2xl shadow-2xl p-6 w-[400px] relative">
         <button
-          onClick={onClose}
+          onClick={closeModal}
           className="absolute right-4 top-3 text-gray-400 hover:text-gray-200"
         >
           ✖
@@ -50,7 +68,7 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
               type="text"
               placeholder="App Name"
               value={appName}
-              onChange={(e) => setAppName(e.target.value)}
+              onChange={(e) => appNameHandler(e)}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
               required
             />
@@ -72,7 +90,7 @@ export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
             <p><strong>API Key:</strong> <span className="text-blue-400">{result.apiKey.slice(0,20)} ...</span></p>
             <button
               color="black"
-              onClick={onClose}
+              onClick={closeModal}
               className="mt-4 w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-lg"
             >
               Close

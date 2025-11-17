@@ -6,10 +6,17 @@ const CompanyModel = require("../models/company.model");
 async function createApiKey(req, res) {
   try {
     const { appName } = req.body;
-
+    
     if (!appName) {
       return res.status(400).json({ msg: "appName is required" });
     }
+
+    let existingApp = await ApiKeyModel.findOne({appName})
+
+    if(existingApp) {
+      return res.status(400).json({msg:"This app name already occupied."})
+    }
+
 
     // backend generates a unique, non-guessable appId
     const appId = `app_${crypto.randomBytes(8).toString("hex")}`;

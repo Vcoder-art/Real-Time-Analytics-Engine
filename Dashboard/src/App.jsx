@@ -5,7 +5,9 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/protected";
 import UnprotectedRoute from "./components/unprotected"
 
+
 import Dashboard from "./pages/dashboard";
+import RealtimeStatsPage from "./pages/RealtimeSatatsPage";
 
 export default function App() {
   return (
@@ -19,6 +21,7 @@ export default function App() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/real-time-stats" element={<RealtimeStatsPage />} />
         </Route>
 
       </Routes>

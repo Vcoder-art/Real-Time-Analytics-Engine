@@ -46,9 +46,13 @@ class WebSocketGateway {
       let data3 = await query.getCountOfEventsByApp(company_id, app_id);
 
       const response = {
-        dailyActiveUsers: data,
-        trendingEvents: data2,
-        countOfEventsByApp: data3,
+        type: "QUERIED_DATA",
+        channel,
+        data: {
+          dailyActiveUsers: data,
+          trendingEvents: data2,
+          countOfEventsByApp: data3,
+        },
       };
 
       for (const ws of clients) {

@@ -6,11 +6,9 @@ class WebSocketService {
 
   connect() {
     return new Promise((res, rej) => {
-    //   console.log(this.ws);
-    //   console.log(this.ws.readyState)
-    //   console.log(WebSocket.OPEN)
       if (this.ws && this.ws.readyState === WebSocket.OPEN)
-        rej("Websocket not define");
+       return rej("You Already Connected.");
+
       this.ws = new WebSocket("ws://localhost:4000");
       this.ws.onopen = () => res("WS Connected");
       this.ws.onclose = () => console.log("WS Disconnected");
@@ -19,7 +17,10 @@ class WebSocketService {
       this.ws.onmessage = (msg) => {
         try {
           const data = JSON.parse(msg.data);
-
+          console.log(data)
+          // if(data?.type !== "QUERIED_DATA") {
+          //    return console.log(data);
+          // } 
           //real time messages
 
           if (data.channel && this.callbacks.has(data.channel)) {
