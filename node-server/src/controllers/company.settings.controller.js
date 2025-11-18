@@ -32,13 +32,13 @@ const settingUpdate = async (req, res) => {
     // Whitelist allowed update fields
     // ----------------------------
     const allowedFields = [
-      "retention_days",
-      "realtime_enabled",
-      "realtime_interval_ms",
-      "allowed_domains",
-      "auto_purge",
-      "webhook_url",
-      "email_alerts",
+      "retentionDays",
+      "realtimeEnabled",
+      "realtimeIntervalMS",
+      "allowedDomains",
+      "autoPurge",
+      "webhookUrl",
+      "emailAlerts",
     ];
 
     const sanitizedUpdates = {};
@@ -56,7 +56,7 @@ const settingUpdate = async (req, res) => {
       });
     }
 
-    const settings = await CompanySettingsModel.findOneAndUpdate(
+    const settings = await CompanyModel.findOneAndUpdate(
       { companyId },
       {
         $set: sanitizedUpdates,

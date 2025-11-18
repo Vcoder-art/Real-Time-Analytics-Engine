@@ -4,8 +4,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/protected";
 import UnprotectedRoute from "./components/unprotected"
-
-
 import Dashboard from "./pages/dashboard";
 import RealtimeStatsPage from "./pages/RealtimeSatatsPage";
 

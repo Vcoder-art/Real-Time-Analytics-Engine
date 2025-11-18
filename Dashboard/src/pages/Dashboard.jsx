@@ -9,7 +9,8 @@ import CreateAppModal from "../components/CreateModal";
 import AppDetailsCard from "../components/AppDetailsCard";
 import AppDetailsModal from "../components/App-Details-Model";
 import { ws } from "../services/ws";
-import { RiLogoutBoxRFill } from "react-icons/ri";
+import SettingsComponent from "../pages/Settings"
+import { IoSettingsOutline } from "react-icons/io5";
 
 export default function Dashboard() {
     const { user } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ export default function Dashboard() {
     const [isCreatingApp, setIsCreatingApp] = useState(false);
     const [isOpenAppDetails, setIsOpenAppDetails] = useState();
     const [stats, setStats] = useState(null);
+    const [settingsOpen, setSettingsOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -51,7 +53,6 @@ export default function Dashboard() {
     }
 
     const onSubscribeChannel = async (app) => {
-
         let initialData = await initialAggregatedResult(app.appId, app.company, 5);
         setStats(initialData.data)
         setSelectedApp(app)
@@ -59,7 +60,6 @@ export default function Dashboard() {
             if (e.data) {
                 setStats(e.data)
             }
-
         });
     }
 
@@ -68,6 +68,7 @@ export default function Dashboard() {
         <div style={{ width: "198%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
             <CreateAppModal onAppCreated={onAppCreation} isOpen={isCreatingApp} onClose={() => setIsCreatingApp(false)} />
             <AppDetailsModal onClose={() => setIsOpenAppDetails(false)} app={selectedAppDetails} open={isOpenAppDetails} />
+            <SettingsComponent onClose={()=>setSettingsOpen(false)} open={settingsOpen}/>
             {/* Header */}
             <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-gray-900/70 backdrop-blur-md">
                 <h3 className="text-2xl font-semibold flex items-center gap-2">
@@ -79,6 +80,7 @@ export default function Dashboard() {
                     <span className="text-sm text-gray-400">
                         {user?.company?.email || "Anonymous"}
                     </span>
+                    <IoSettingsOutline size={25} onClick={()=>setSettingsOpen(true)} />
                 </div>
             </header>
 
