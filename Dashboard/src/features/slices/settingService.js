@@ -12,5 +12,5 @@ export const updateSettings = async (updates) => {
   const response = await axios.post(url + "/update-settings", {
     updates,
   });
-  return response.data;
+  return response.data.data.settings;
 };

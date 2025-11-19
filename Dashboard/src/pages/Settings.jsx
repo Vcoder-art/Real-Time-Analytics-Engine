@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSettings, updateSett as updateSettings } from "../features/slices/settingSlice";
-import { IoIosCloseCircle } from "react-icons/io";
+import {logout} from "../features/slices/authSlice"
+import { IoIosCloseCircle, IoMdLogOut } from "react-icons/io";
+import LogoutModal from "../components/LogoutModal";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function SettingsDrawer({ open, onClose }) {
   const dispatch = useDispatch();
+  const [isLogoutOpen,setIsLogoutOpen] = useState(false)
   const { settings, loading, saving } = useSelector((s) => s.settings);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     retentionDays: 30,
@@ -19,6 +24,7 @@ export default function SettingsDrawer({ open, onClose }) {
   }, [open]);
 
   useEffect(() => {
+    console.log("settings", settings)
     if (settings) {
       setForm({
         retentionDays: settings.retentionDays,
@@ -52,8 +58,15 @@ export default function SettingsDrawer({ open, onClose }) {
     else toast.error("Update failed");
   };
 
+
+  const logoutFromDashboard = ()=> {
+    dispatch(logout())
+    navigate("/login")
+  } 
+
   return (
     <>
+      <LogoutModal onCancel={()=>setIsLogoutOpen(false)} open={isLogoutOpen} onConfirm={()=>logoutFromDashboard()} />
       {/* Background blur overlay */}
       {open && (
         <div
@@ -126,7 +139,15 @@ export default function SettingsDrawer({ open, onClose }) {
             </button>
           </div>
         )}
+
+
+        <div style={{marginTop:"80%",textAlign:"right"}}>
+          <button>
+            <IoMdLogOut size={30} onClick={()=>setIsLogoutOpen(true)} />
+          </button>
+        </div>
       </div>
+
     </>
   );
 }

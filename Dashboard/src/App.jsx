@@ -6,12 +6,18 @@ import ProtectedRoute from "./components/protected";
 import UnprotectedRoute from "./components/unprotected"
 import Dashboard from "./pages/dashboard";
 import RealtimeStatsPage from "./pages/RealtimeSatatsPage";
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+      />
+
       <Routes>
-         {/* UnProtected Routes */}
+        {/* UnProtected Routes */}
         <Route element={<UnprotectedRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -1,5 +1,12 @@
+import { useEffect } from "react";
+import DailyActiveUsersChart from "../components/Daily-Active-Users";
+import TrendingEventsStacked from "../components/Trending-Events";
+
 export default function RealtimeStatsPage({ stats }) {
 
+  useEffect(() => {
+    transformTrendingData();
+  }, []);
 
   if (!stats) {
     return (
@@ -11,12 +18,29 @@ export default function RealtimeStatsPage({ stats }) {
   const trending = stats.trendingEvents?.data || [];
   const totalEvents = stats.countOfEventsByApp?.count || 0;
 
+
+
+  function transformTrendingData() {
+    const raw = stats.trendingEvents?.data;
+
+    if (raw && raw.length > 0) {
+      const map = {};
+
+      raw.forEach(item => {
+        if (!map[item.date]) map[item.date] = { date: item.date };
+        map[item.date][item.event_name] = Number(item.count);
+      });
+
+      return Object.values(map);
+    }
+
+  }
+
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         <div className="bg-gray-800 p-5 rounded-xl shadow-lg">
           <h3 className="text-gray-400">Total Events</h3>
           <p className="text-3xl font-semibold mt-2">{totalEvents}</p>
@@ -29,6 +53,16 @@ export default function RealtimeStatsPage({ stats }) {
           </p>
         </div>
       </div>
+
+      <div className="mt-3">
+        <h4>Daily Active Users</h4>
+        <DailyActiveUsersChart data={dau.map(el => ({ date: el.date, count: Number(el.count) }))} />
+        <h4>Trending Events</h4>
+        <TrendingEventsStacked data={transformTrendingData()} />
+      </div>
+
+      {/* Stats Cards */}
+
 
       {/* Charts + Tables */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">

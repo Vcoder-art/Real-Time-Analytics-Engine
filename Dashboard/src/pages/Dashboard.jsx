@@ -42,18 +42,12 @@ export default function Dashboard() {
         }
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem("user");
-        navigate("/login");
-        window.location.reload();
-    };
-
     const onAppCreation = () => {
         getChannels();
     }
 
     const onSubscribeChannel = async (app) => {
-        let initialData = await initialAggregatedResult(app.appId, app.company, 5);
+        let initialData = await initialAggregatedResult(app.appId);
         setStats(initialData.data)
         setSelectedApp(app)
         ws.subscribe(app.channel, (e) => {
@@ -65,7 +59,7 @@ export default function Dashboard() {
 
 
     return (
-        <div style={{ width: "198%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+        <div style={{ width: "147%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
             <CreateAppModal onAppCreated={onAppCreation} isOpen={isCreatingApp} onClose={() => setIsCreatingApp(false)} />
             <AppDetailsModal onClose={() => setIsOpenAppDetails(false)} app={selectedAppDetails} open={isOpenAppDetails} />
             <SettingsComponent onClose={()=>setSettingsOpen(false)} open={settingsOpen}/>
