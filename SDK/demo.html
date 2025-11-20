@@ -1,19 +1,43 @@
 <html>
-  <head><title>Analytics SDK Test</title></head>
+  <head>
+    <title>Analytics SDK Test</title>
+  </head>
   <body>
-    <button id="track">Track Event</button>
-    <script type="module" >
-      import Analytics from "/dist/index.js"
+    <button id="track">Track Event (Button Clicked)</button>
+    <button id="track2">Track Event (Login Clicked)</button>
+    <button id="track3">Track Event (Register Clicked)</button>
+    <button id="track4">Track Event (Transaction Clicked)</button>
+    <!-- <button id="track5">Track Event</button> -->
+
+    <script type="module">
+      import Analytics from "/dist/index.js";
       const sdk = new Analytics({
         apiUrl: "http://localhost:4000/api/events/save-events", // your mock API
-        apiKey: "pk_2332b83f4c84d73e1884c0bb03e80d71c0e5b0fef87de08461c07818106fac58",
-        userId: "user-12356",
+        apiKey:
+          "pk_2332b83f4c84d73e1884c0bb03e80d71c0e5b0fef87de08461c07818106fac58",
+        userId: "user-129090",
         debug: true,
       });
 
       document.getElementById("track").addEventListener("click", () => {
         sdk.track("button_clicked", { time: new Date().toISOString() });
       });
+
+      document.getElementById("track2").addEventListener("click", () => {
+        sdk.track("login_clicked", { time: new Date().toISOString() });
+      });
+
+       document.getElementById("track3").addEventListener("click", () => {
+        sdk.track("register_clicked", { time: new Date().toISOString() });
+      });
+
+      document.getElementById("track4").addEventListener("click", () => {
+        sdk.track("transaction_clicked", { time: new Date().toISOString() });
+      });
+
+      //   document.getElementById("track4").addEventListener("click", () => {
+      //   sdk.track("transaction_clicked", { time: new Date().toISOString() });
+      // });
     </script>
   </body>
 </html>

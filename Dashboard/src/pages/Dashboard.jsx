@@ -12,6 +12,7 @@ import { ws } from "../services/ws";
 import SettingsComponent from "../pages/Settings"
 import { IoSettingsOutline } from "react-icons/io5";
 
+
 export default function Dashboard() {
     const { user } = useSelector((state) => state.auth);
     const [channels, setChannels] = useState([]);

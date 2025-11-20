@@ -30,7 +30,7 @@ export default function RealtimeStatsPage({ stats }) {
         if (!map[item.date]) map[item.date] = { date: item.date };
         map[item.date][item.event_name] = Number(item.count);
       });
-
+      console.log( Object.values(map))
       return Object.values(map);
     }
 

@@ -1,21 +1,17 @@
 {
-  "name": "@god/analytics-sdk",
+  "name": "@vishalsahu012/analytics-sdk",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w"
-  },
   "keywords": [
     "analytics",
     "sdk",
-    "event-tracking"
+    "events"
   ],
   "author": "Vishal Sahu",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "typescript": "^5.9.3"
-  }
+  "license": "MIT",
+  "description": "Client SDK for sending events to Analytics backend",
+  "files": [
+    "dist"
+  ]
 }

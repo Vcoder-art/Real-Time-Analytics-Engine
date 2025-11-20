@@ -1,5 +1,7 @@
 const { analyticsClient } = require("../grpc/client");
 const { RustQuery } = require("../rust-query/rust-query");
+const CompanySettingModel = require("../models/company.settings.model");
+const ApiKeyModel = require("../models/api.key.model");
 
 async function saveEvents(req, res) {
   const { events, userid } = req.body;
@@ -37,17 +39,31 @@ async function saveEvents(req, res) {
 }
 
 async function getInitialAggregatedResults(req, res) {
-  const { appId, company, days } = req.body;
+  const { appId } = req.body;
 
-  if (!appId || !company || !days) {
-    return res.status(400).json({ msg: "Missing Fields.", success: false });
+  if (!appId) {
+    return res.status(400).json({ msg: "Missing App ID.", success: false });
   }
 
+  let companyId = req.companyId;
+
   try {
+    const isValidApp = await ApiKeyModel.findOne({
+      company: companyId,
+      appId,
+    }).select("_id");
+
+    if (!isValidApp) {
+      return res.status(400).json({ msg: "Invalid app ID." });
+    }
+
+    const companySettings = await CompanySettingModel.findOne({ companyId });
+    const days = companySettings.retentionDays || 10;
+
     let query = new RustQuery();
-    let data = await query.getDailyActiveUsers(company, appId, days);
-    let data2 = await query.getTrendingEvents(company, appId, days);
-    let data3 = await query.getCountOfEventsByApp(company, appId);
+    let data = await query.getDailyActiveUsers(companyId, appId, days);
+    let data2 = await query.getTrendingEvents(companyId, appId, days);
+    let data3 = await query.getCountOfEventsByApp(companyId, appId);
 
     const payload = {
       success: true,
@@ -59,10 +75,12 @@ async function getInitialAggregatedResults(req, res) {
       },
     };
 
-    res.json(payload)
+    res.json(payload);
   } catch (err) {
-    res.status(500).json({msg:"Failed to fetch initial data.", success: false})
+    res
+      .status(500)
+      .json({ msg: "Failed to fetch initial data.", success: false });
   }
 }
 
-module.exports = { saveEvents ,getInitialAggregatedResults};
+module.exports = { saveEvents, getInitialAggregatedResults };

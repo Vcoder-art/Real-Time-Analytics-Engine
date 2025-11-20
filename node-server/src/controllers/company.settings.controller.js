@@ -71,7 +71,9 @@ const settingUpdate = async (req, res) => {
     return res.json({
       success: true,
       msg: "Settings updated successfully",
-      settings,
+      data:{
+        settings
+      },
     });
   } catch (error) {
     return res.status(500).json({

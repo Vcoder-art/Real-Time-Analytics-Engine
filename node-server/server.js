@@ -19,7 +19,7 @@ app.use(express.json()); // important: parse JSON body
 app.use("/api", routes);
 
 app.get("/", (req, res) => {
-  res.json({ msg: "Demo server started" });
+  res.json({ msg: "Node server started" });
 });
 
 mongoose
