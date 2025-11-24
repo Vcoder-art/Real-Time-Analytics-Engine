@@ -1,6 +1,8 @@
 
 
 export interface AnalyticsConfig {
+  name:string,
+  email:string,
   apiUrl: string;       // Backend endpoint e.g. "http://localhost:3000/api/events"
   apiKey: string;       // Mock API key for now
   userId: string;      // Optional: can be added by client

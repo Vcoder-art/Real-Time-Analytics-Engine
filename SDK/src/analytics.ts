@@ -1,5 +1,9 @@
 import { AnalyticsConfig, EventPayload, SendResponse } from "./types";
 
+const ANALYTICS_QUEUE_KEY = "analytics_queue";
+const ANALYTICS_USER_ID_KEY = "analytics_user_id";
+const ANON_ID_KEY = "analytics_anonymous_id";
+
 export default class Analytics {
   private config: AnalyticsConfig;
   private queue: EventPayload[] = [];
@@ -28,6 +32,49 @@ export default class Analytics {
     this.attachBeforeUnload();
   }
 
+  async identify(email: string, name: string) {
+    this.config.email = email;
+    this.config.name = name;
+    await this.initializeUser();
+  }
+
+  private async initializeUser() {
+    // Already exists?
+    const storedUserId = localStorage.getItem(ANALYTICS_USER_ID_KEY);
+
+    if (storedUserId) {
+      this.config.userId = storedUserId;
+      if (this.config.debug)
+        console.log("[Analytics] Loaded existing user:", storedUserId);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${this.config.apiUrl}/company-users/init-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": this.config.apiKey,
+        },
+        body: JSON.stringify({
+          email: this.config.email,
+          name: this.config.name,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.userId) {
+        localStorage.setItem(ANALYTICS_USER_ID_KEY, data.userId);
+        this.config.userId = data.userId;
+
+        if (this.config.debug)
+          console.log("[Analytics] User initialized:", data.userId);
+      }
+    } catch (err) {
+      console.error("[Analytics] Failed to initialize user:", err);
+    }
+  }
+
   /** Public method for tracking events */
 
   track(event: string, metadata: Record<string, any> = {}) {
@@ -53,6 +100,14 @@ export default class Analytics {
   async flush() {
     if (this.isFlushing || this.queue.length === 0) return;
 
+    if (!this.config.userId) {
+      this.initializeUser();
+      if (this.config.debug) {
+        console.log("[Analytics] retry to initialize user");
+      }
+      return;
+    }
+
     this.isFlushing = true;
     const events = [...this.queue];
     this.queue = []; // clear queue
@@ -74,7 +129,7 @@ export default class Analytics {
       if (this.config.debug) {
         console.log(`[Analytics] Flushed ${events.length} events`);
       }
-      localStorage.removeItem("analytics_queue");
+      localStorage.removeItem(ANALYTICS_QUEUE_KEY);
     } catch (err) {
       console.error("[Analytics] Failed to send events:", err);
       this.queue.unshift(...events); // requeue for retry
@@ -105,7 +160,7 @@ export default class Analytics {
 
   private saveQueueToStorage() {
     try {
-      localStorage.setItem("analytics_queue", JSON.stringify(this.queue));
+      localStorage.setItem(ANALYTICS_QUEUE_KEY, JSON.stringify(this.queue));
     } catch (err) {
       console.warn("[Analytics] Failed to save queue to localStorage", err);
     }
@@ -113,7 +168,7 @@ export default class Analytics {
 
   private loadQueueFromStorage() {
     try {
-      const saved = localStorage.getItem("analytics_queue");
+      const saved = localStorage.getItem(ANALYTICS_QUEUE_KEY);
       if (saved) {
         this.queue = JSON.parse(saved);
         if (this.config.debug) {
@@ -125,5 +180,9 @@ export default class Analytics {
     } catch (err) {
       console.warn("[Analytics] Failed to load queue from localStorage", err);
     }
+  }
+
+  private generateAnonymousId() {
+    return "anon_" + crypto.randomUUID();
   }
 }

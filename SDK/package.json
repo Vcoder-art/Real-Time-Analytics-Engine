@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
   "keywords": [
     "analytics",
     "sdk",
@@ -13,5 +17,8 @@
   "description": "Client SDK for sending events to Analytics backend",
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "typescript": "^5.9.3"
+  }
 }
