@@ -1,11 +1,11 @@
 mod model;
 
-use anyhow::{Ok, Result};
+use crate::EventTrend;
+use anyhow::{Error, Ok, Result};
 use chrono::{DateTime, Duration, NaiveDate, NaiveDateTime, Utc};
 pub use model::EventDTO;
 use serde_json::Value as JsonValue;
 use sqlx::{Pool, Postgres, Row, postgres::PgRow, query_builder::QueryBuilder};
-use crate::EventTrend;
 
 pub struct Store {
     pub pool: Pool<Postgres>,
@@ -159,5 +159,169 @@ impl Store {
         Ok(trends)
     }
 
-    
+    pub async fn get_user_summary(
+        &self,
+        company_id: &str,
+        app_id: &str,
+        user_id: &str,
+    ) -> Result<(i64, Option<DateTime<Utc>>, Option<DateTime<Utc>>), Error> {
+        let mut query_builder: QueryBuilder<'_, Postgres> = QueryBuilder::<Postgres>::new(
+            "SELECT 
+                 COUNT(*)::BIGINT AS total_events,
+                 MIN(event_ts) AS first_ts,
+                 MAX(event_ts) AS last_ts
+              FROM events
+              WHERE",
+        );
+
+        query_builder
+            .push(" company_id = ")
+            .push_bind(company_id)
+            .push(" AND app_id = ")
+            .push_bind(app_id)
+            .push(" AND user_id = ")
+            .push_bind(user_id);
+
+        let query = query_builder
+            .build_query_as::<(Option<i64>, Option<DateTime<Utc>>, Option<DateTime<Utc>>)>();
+        let row = query.fetch_one(&self.pool).await?;
+        Ok((row.0.unwrap_or(0), row.1, row.2))
+    }
+
+    pub async fn get_user_activity_timeline(
+        &self,
+        company_id: &str,
+        app_id: &str,
+        user_id: &str,
+        days: i32,
+    ) -> Result<Vec<(NaiveDate, i64)>, Error> {
+        // <-- 3. Corrected return type syntax
+        let from: NaiveDateTime = (Utc::now() - Duration::days(days as i64)).naive_utc();
+
+        let mut qb = QueryBuilder::<Postgres>::new(
+            "
+            Select DATE (event_ts) AS day, COUNT(*)::BIGINT AS count 
+            FROM events
+            WHERE
+        ",
+        );
+
+        qb.push(" company_id = ")
+            .push_bind(company_id)
+            .push(" AND app_id = ")
+            .push_bind(app_id)
+            .push(" AND user_id = ")
+            .push_bind(user_id)
+            .push(" AND event_ts >= ")
+            .push_bind(from)
+            .push(
+                " GROUP BY DATE(event_ts)
+                     ORDER BY DATE(event_ts)",
+            );
+
+        let rows: Vec<PgRow> = qb
+            .build() // <-- CORRECT: Use .build() to finalize the query
+            .fetch_all(&self.pool)
+            .await?;
+
+        let result: Vec<(NaiveDate, i64)> = rows
+            .into_iter()
+            .map(|row: PgRow| {
+                // Note: row.get() infers the type from context,
+                // but explicitly returning the tuple is key.
+                let day: NaiveDate = row.get("day");
+                let count: i64 = row.get("count");
+                (day, count) // <-- 1 & 2. Returns the expected tuple
+            })
+            .collect();
+
+        Ok(result)
+    }
+
+    pub async fn get_user_event_breakdown(
+        &self,
+        company_id: &str,
+        app_id: &str,
+        user_id: &str,
+        days: i32,
+    ) -> Result<Vec<(String, i64)>, Error> {
+        let from: NaiveDateTime = (Utc::now() - Duration::days(days as i64)).naive_utc();
+        let mut qb = QueryBuilder::<Postgres>::new(
+            "
+            SELECT event_name, COUNT(*)::BIGINT AS count
+            FROM events
+            WHERE
+        ",
+        );
+
+        qb.push(" company_id = ")
+            .push_bind(company_id)
+            .push(" AND app_id = ")
+            .push_bind(app_id)
+            .push(" AND user_id = ")
+            .push_bind(user_id)
+            .push(" AND event_ts >= ")
+            .push_bind(from);
+
+        qb.push(
+            " GROUP BY event_name
+              ORDER BY count DESC
+            ",
+        );
+
+        let rows = qb.build().fetch_all(&self.pool).await?;
+
+        let result = rows
+            .into_iter()
+            .map(|row: PgRow| {
+                let event_name: String = row.get("event_name");
+                let count: i64 = row.get("count");
+                (event_name, count)
+            })
+            .collect();
+        Ok(result)
+    }
+
+    pub async fn get_user_recent_events(
+        &self,
+        company_id: &str,
+        app_id: &str,
+        user_id: &str,
+        limit: i64,
+    ) -> Result<Vec<(String, i64, String)>, Error> {
+        let mut qb = QueryBuilder::<Postgres>::new(
+            "
+                SELECT event_name, EXTRACT(EPOCH FROM event_ts)*1000 AS ts_ms, payload::TEXT AS payload_json
+                FROM events
+                WHERE
+            "
+        );
+
+        qb.push(" company_id = ")
+            .push_bind(company_id)
+            .push(" AND app_id = ")
+            .push_bind(app_id)
+            .push(" AND user_id = ")
+            .push_bind(user_id);
+        qb.push(" ORDER BY event_ts DESC LIMIT ").push_bind(limit);
+
+        let rows = qb.build().fetch_all(&self.pool).await?;
+
+        let result = rows
+            .into_iter()
+            .map(|row: PgRow| {
+                // event_name is a simple String
+                let event_name: String = row.get("event_name");
+                // EXTRACT(EPOCH) returns f64 (double precision), so we retrieve as f64 and cast to i64
+                // we rely on event_ts being NOT NULL
+                let ts_ms: i64 = row.get::<f64, _>("ts_ms").round() as i64;
+                let payload_json: String = row
+                    .get::<Option<String>, _>("payload_json")
+                    .unwrap_or_else(|| "{}".to_string());
+
+                (event_name, ts_ms, payload_json)
+            })
+            .collect();
+        Ok(result)
+    }
 }

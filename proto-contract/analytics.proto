@@ -83,6 +83,45 @@ message GetCountResponse {
   uint64 count = 1;
 }
 
+message GetUserInitialAnalyticsRequest {
+   string company_id = 1;
+   string app_id = 2;
+   string user_id = 3;
+   int32 days = 4; // eg.last 30 days
+}
+
+message UserSummary {
+  string user_id = 1;
+  string app_id = 2;
+  string company_id = 3;
+  int64 total_events = 4;
+  int64 first_events_ts = 5;
+  int64 last_event_ts = 6;
+}
+
+message UserActivityPoint {
+  string date = 1; // "YYYY-MM-DD"
+  int64 count = 2;
+}
+
+message UserEventBreakdownItem {
+  string event_name = 1;
+  int64 count = 2;
+}
+
+message UserRecentEvent {
+  string event_name = 1;
+  int64 ts = 2;
+  string payload_json = 3;
+}
+
+message GetUserInitialAnalyticsResponse {
+  UserSummary summary = 1;
+  repeated UserActivityPoint activity_timeline = 2;
+  repeated UserEventBreakdownItem event_breakdown = 3;
+  repeated UserRecentEvent recent_events = 4;
+}
+
 // The gRPC service definition
 service AnalyticsService {
   rpc SaveEvent (EventBatch) returns (SaveEventResponse);
@@ -90,4 +129,5 @@ service AnalyticsService {
   rpc GetDailyActiveUsers(DailyActiveUsersRequest) returns (DailyActiveUsersResponse);
   rpc GetEventTrends(EventTrendRequest) returns (EventTrendResponse);
   rpc GetTopEvents(TopEventsRequest) returns (TopEventsResponse);
+  rpc GetUserInitialAnalytics(GetUserInitialAnalyticsRequest) returns (GetUserInitialAnalyticsResponse);
 }

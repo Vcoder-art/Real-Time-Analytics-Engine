@@ -1,5 +1,5 @@
 const { generateUserId } = require("../utils/generateId");
-const UserModel = require("../models/company.users.model");
+const UserModel = require("../models/company-users.model");
 
 const initUser = async (req, res) => {
   const { email, name } = req.body;
@@ -49,4 +49,35 @@ const initUser = async (req, res) => {
   }
 };
 
-module.exports = { initUser };
+const listUsersByApp = async (req, res) => {
+  const { appId } = req.query;
+
+  if (!appId) {
+    return res.status(400).json({
+      success: false,
+      msg: "AppId is required.",
+    });
+  }
+
+  try {
+    const usersList = await UserModel.find({ appId }).select("email name userId lastActiveAt createdAt");
+
+    if (usersList.length < 1) {
+      return res
+        .status(404)
+        .json({ success: false, msg: "Users not found on this app." });
+    }
+
+    const payload = {
+      msg: "Successfully fetch users.",
+      usersList
+    }
+
+    return res.json(payload)
+     
+  } catch (err) {
+    res.status(500).json({msg:"Failed to fetch users."})
+  }
+};
+
+module.exports = { initUser,listUsersByApp };

@@ -16,12 +16,11 @@ mod analytics {
 
 use analytics::{
     DailyActiveUsersRequest, DailyActiveUsersResponse, DayCount, EventBatch, EventCount,
-    EventTrendRequest, EventTrendResponse, GetCountRequest, GetCountResponse, SaveEventResponse,
+    EventTrend, EventTrendRequest, EventTrendResponse, GetCountRequest, GetCountResponse,
+    GetUserInitialAnalyticsRequest, GetUserInitialAnalyticsResponse, SaveEventResponse,
     TopEventsRequest, TopEventsResponse,
-    EventTrend,
     analytics_service_server::{AnalyticsService, AnalyticsServiceServer},
 };
-
 
 pub struct AnalyticsServer {
     store: Arc<Store>,
@@ -127,32 +126,29 @@ impl AnalyticsService for AnalyticsServer {
             .get_daily_active_users(req.company_id, req.app_id, req.days as i64)
             .await
             .map_err(|e| Status::internal(format!("DB error {:?}", e)))?;
-        
-        let data:Vec<DayCount> = rows.into_iter().map(|(date,count)| {
-           DayCount {
-            count:count as u64,
-            date:date.to_string()
-           }
-        }).collect();
 
-        Ok(Response::new(DailyActiveUsersResponse {
-            data
-        }))
+        let data: Vec<DayCount> = rows
+            .into_iter()
+            .map(|(date, count)| DayCount {
+                count: count as u64,
+                date: date.to_string(),
+            })
+            .collect();
+
+        Ok(Response::new(DailyActiveUsersResponse { data }))
     }
 
     async fn get_event_trends(
         &self,
         request: Request<EventTrendRequest>,
     ) -> Result<Response<EventTrendResponse>, Status> {
-       
-       let req = request.into_inner();
-       let rows = self.store
-       .get_event_trends(req.company_id,req.app_id, req.days)
-       .await
-       .map_err(|e: anyhow::Error| Status::internal(format!("DB error {:?}", e)))?;
-        Ok(Response::new( EventTrendResponse {
-            data:rows
-        }))
+        let req = request.into_inner();
+        let rows = self
+            .store
+            .get_event_trends(req.company_id, req.app_id, req.days)
+            .await
+            .map_err(|e: anyhow::Error| Status::internal(format!("DB error {:?}", e)))?;
+        Ok(Response::new(EventTrendResponse { data: rows }))
     }
 
     async fn get_top_events(
@@ -165,6 +161,21 @@ impl AnalyticsService for AnalyticsServer {
                 event_name: "".to_string(),
             }],
         }))
+    }
+
+    async fn get_user_initial_analytics(
+        &self,
+        request: Request<GetUserInitialAnalyticsRequest>
+    ) -> Result<Response<GetUserInitialAnalyticsResponse>,Status> {
+       
+         let req = request.into_inner();
+         let company_id = req.company_id;   
+         let app_id = req.app_id;
+         let user_id = req.user_id;
+         let days = if req.days > 0 {req.days} else {30};
+
+         let store = self.store.clone();
+
     }
 }
 

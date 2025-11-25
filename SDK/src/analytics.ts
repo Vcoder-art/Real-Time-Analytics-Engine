@@ -18,24 +18,26 @@ export default class Analytics {
       ...config,
     };
 
-    if (!this.config.userId) {
-      throw new Error("userId is required in Analytics config");
-    }
+    // if (!this.config.userId) {
+    //   throw new Error("userId is required in Analytics config");
+    // }
 
     if (this.config.debug) {
       console.log("[Analytics] Initialized with config:", this.config);
     }
-
     // Start periodic flush + add beforeunload hook
     this.loadQueueFromStorage();
-    this.startAutoFlush();
-    this.attachBeforeUnload();
   }
 
   async identify(email: string, name: string) {
+    if (!email || !name) {
+      throw new Error("[Analytics] email and name is required.");
+    }
     this.config.email = email;
     this.config.name = name;
     await this.initializeUser();
+    this.startAutoFlush();
+    this.attachBeforeUnload();
   }
 
   private async initializeUser() {
@@ -113,7 +115,7 @@ export default class Analytics {
     this.queue = []; // clear queue
 
     try {
-      const response = await fetch(this.config.apiUrl, {
+      const response = await fetch(this.config.apiUrl+"/events/save-events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

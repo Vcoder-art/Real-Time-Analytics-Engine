@@ -7,6 +7,7 @@ import UnprotectedRoute from "./components/unprotected"
 import Dashboard from "./pages/dashboard";
 import RealtimeStatsPage from "./pages/RealtimeSatatsPage";
 import { Toaster } from 'react-hot-toast';
+import Users from "./pages/Users";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/real-time-stats" element={<RealtimeStatsPage />} />
+          <Route path="/users-list/:appId" element={<Users />} />
         </Route>
 
       </Routes>
