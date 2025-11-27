@@ -22,6 +22,8 @@ use analytics::{
     analytics_service_server::{AnalyticsService, AnalyticsServiceServer},
 };
 
+use crate::analytics::{UserActivityPoint, UserEventBreakdownItem, UserRecentEvent, UserSummary};
+
 pub struct AnalyticsServer {
     store: Arc<Store>,
     redis_pub: Arc<RedisPublisher>,
@@ -71,11 +73,12 @@ impl AnalyticsService for AnalyticsServer {
                 "app_id": app_id,
                 "user_id": user_id,
                 });
-                let channel = format!("analytics:company:{}:app:{}", company_id, app_id);
+                let app_channel = format!("analytics:company:{}:app:{}", company_id, app_id);
+                let user_channel = format!("analytics:company:{}:app:{}:user:{}",company_id,app_id,user_id);
 
                 let publisher: Arc<RedisPublisher> = self.redis_pub.clone();
                 tokio::spawn(async move {
-                    if let Err(e) = publisher.publish(&channel, &msg).await {
+                    if let Err(e) = publisher.publish(&app_channel, &msg ,&user_channel).await {
                         error!("redis publish error: {:?}", e);
                     };
                 });
@@ -165,16 +168,81 @@ impl AnalyticsService for AnalyticsServer {
 
     async fn get_user_initial_analytics(
         &self,
-        request: Request<GetUserInitialAnalyticsRequest>
-    ) -> Result<Response<GetUserInitialAnalyticsResponse>,Status> {
-       
-         let req = request.into_inner();
-         let company_id = req.company_id;   
-         let app_id = req.app_id;
-         let user_id = req.user_id;
-         let days = if req.days > 0 {req.days} else {30};
+        request: Request<GetUserInitialAnalyticsRequest>,
+    ) -> Result<Response<GetUserInitialAnalyticsResponse>, Status> {
+        let req = request.into_inner();
+        let company_id = req.company_id;
+        let app_id = req.app_id;
+        let user_id = req.user_id;
+        let days = if req.days > 0 { req.days } else { 30 };
 
-         let store = self.store.clone();
+        let store: Arc<Store> = self.store.clone();
+
+        let (summary,
+             timeline, 
+             breakdown, 
+             recent) = tokio::try_join!(
+            async { store.get_user_summary(&company_id, &app_id, &user_id).await },
+            async {
+                store
+                    .get_user_activity_timeline(&company_id, &app_id, &user_id, days)
+                    .await
+            },
+            async {
+                store
+                    .get_user_event_breakdown(&company_id, &app_id, &user_id, days)
+                    .await
+            },
+            async {
+                store
+                    .get_user_recent_events(&company_id, &app_id, &user_id, 20)
+                    .await
+            }
+        )
+        .map_err(|e| {
+            error!("user analytics error: {:?}", e);
+            Status::internal("failed to compute user analytics")
+        })?;
+
+        let (total, first_ts, last_ts) = summary;
+
+        let summary_msg = UserSummary {
+            user_id: user_id.clone(),
+            app_id: app_id.clone(),
+            company_id: company_id.clone(),
+            total_events: total,
+            first_events_ts: first_ts.map(|dt| dt.timestamp_millis()).unwrap_or_default(),
+            last_event_ts: last_ts.map(|dt| dt.timestamp_millis()).unwrap_or_default(),
+        };
+
+        let activity_timeline = timeline
+            .into_iter()
+            .map(|(date, count)| UserActivityPoint {
+                count,
+                date: date.to_string(),
+            })
+            .collect();
+        let event_breakdown: Vec<UserEventBreakdownItem> = breakdown.into_iter().map(|(name, count)| UserEventBreakdownItem {
+            event_name: name,
+            count,
+        })
+        .collect::<Vec<UserEventBreakdownItem>>();
+        
+        let recent_events = recent.into_iter()
+                                    .map(|(name,ts,payload)| UserRecentEvent {
+                                        event_name:name,
+                                        payload_json:payload,
+                                        ts
+                                    }).collect();
+
+        let resp = GetUserInitialAnalyticsResponse {
+            summary : Some(summary_msg),
+            activity_timeline,
+            event_breakdown,
+            recent_events
+        };
+
+        Ok(Response::new(resp))
 
     }
 }

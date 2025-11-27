@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../apis/axiosInstance";
-import {FaUsers,FaUser,FaClock} from "react-icons/fa"
- 
+import { FaUsers, FaUser, FaClock } from "react-icons/fa"
+import { useNavigate } from "react-router-dom"
+
 export default function UserList({ appId }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -48,6 +50,7 @@ export default function UserList({ appId }) {
                     {u.name || "Unknown User"}
                   </p>
 
+
                   <p className="text-gray-400 text-sm mt-1">
                     <span className="text-gray-500">Email:</span> {u.email}
                   </p>
@@ -66,11 +69,14 @@ export default function UserList({ appId }) {
                   <p className="text-gray-500 text-xs mt-1">
                     Joined: {new Date(u.createdAt).toLocaleDateString()}
                   </p>
+                  <p className="text-gray-400 text-sm">
+                    <span className="text-gray-500">Channel ID:</span> {u.channel}
+                  </p>
                 </div>
 
                 <button
                   className="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm"
-                  onClick={() => console.log("Open user:", u.userId)}
+                  onClick={() => navigate(`/user/${appId}/${u.userId}/${u.channel}`)}
                 >
                   View
                 </button>

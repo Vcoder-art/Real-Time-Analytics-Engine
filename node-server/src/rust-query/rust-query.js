@@ -55,7 +55,31 @@ class RustQuery {
       });
     });
   }
-  
+
+  getUserSpecificData(company_id, app_id, user_id, days) {
+    return new Promise((res, rej) => {
+      const grpcRequest = {
+        company_id: company_id,
+        app_id: app_id,
+        user_id: user_id,
+        days: days ? Number(days) : 30,
+      };
+
+      analyticsClient.GetUserInitialAnalytics(grpcRequest, (err, grpcRes) => {
+        if (err) {
+          return rej("Internal analytics error");
+        }
+
+        const data = grpcRes;
+        return res({
+          summary: data.summary,
+          activityTimeline: { data: data.activity_timeline },
+          eventBreakdown: { data: data.event_breakdown },
+          recentEvents: { data: data.recent_events },
+        });
+      });
+    });
+  }
 }
 
 module.exports = { RustQuery };

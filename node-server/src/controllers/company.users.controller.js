@@ -1,6 +1,6 @@
 const { generateUserId } = require("../utils/generateId");
 const UserModel = require("../models/company-users.model");
-
+const { analyticsClient } = require("../grpc/client");
 const initUser = async (req, res) => {
   const { email, name } = req.body;
   let apiKeyDoc = req.apiKeyDoc;
@@ -60,7 +60,32 @@ const listUsersByApp = async (req, res) => {
   }
 
   try {
-    const usersList = await UserModel.find({ appId }).select("email name userId lastActiveAt createdAt");
+    const usersList = await UserModel.aggregate([
+      {
+        $match: { appId }, // or { appId: appId }
+      },
+      {
+        $project: {
+          _id: 0,
+          email: 1,
+          name: 1,
+          userId: 1,
+          lastActiveAt: 1,
+          createdAt: 1,
+          channel: {
+            $concat: [
+              "analytics:company:",
+              { $toString: "$companyId" },
+              ":app:",
+              { $toString: "$appId" },
+              ":user:",
+              { $toString: "$userId" }, // convert userId field to string if needed
+            ],
+          },
+        },
+      },
+    ]);
+
 
     if (usersList.length < 1) {
       return res
@@ -70,14 +95,51 @@ const listUsersByApp = async (req, res) => {
 
     const payload = {
       msg: "Successfully fetch users.",
-      usersList
-    }
+      usersList,
+    };
 
-    return res.json(payload)
-     
+    return res.json(payload);
   } catch (err) {
-    res.status(500).json({msg:"Failed to fetch users."})
+    res.status(500).json({ msg: "Failed to fetch users." });
   }
 };
 
-module.exports = { initUser,listUsersByApp };
+const getInitialSnapshot = async (req, res) => {
+  const { userId } = req.params;
+  const { appId, days } = req.query;
+  const companyId = req.companyId; // from JWT
+
+  if (!appId) {
+    return res.status(400).json({ success: false, msg: "appId is required" });
+  }
+
+  const grpcRequest = {
+    company_id: companyId,
+    app_id: appId,
+    user_id: userId,
+    days: days ? Number(days) : 30,
+  };
+
+  analyticsClient.GetUserInitialAnalytics(grpcRequest, (err, grpcRes) => {
+    if (err) {
+      console.error("gRPC GetUserInitialAnalytics error:", err);
+      return res
+        .status(500)
+        .json({ success: false, msg: "Internal analytics error" });
+    }
+
+    const data = grpcRes;
+    return res.json({
+      success: true,
+      msg: "Successfully fetched user analytics.",
+      data: {
+        summary: data.summary,
+        activityTimeline: { data: data.activity_timeline },
+        eventBreakdown: { data: data.event_breakdown },
+        recentEvents: { data: data.recent_events },
+      },
+    });
+  });
+};
+
+module.exports = { initUser, listUsersByApp, getInitialSnapshot };

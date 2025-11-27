@@ -1,7 +1,7 @@
 const { WebSocketServer } = require("ws");
 const { Redis } = require("ioredis");
 const { RustQuery } = require("../rust-query/rust-query");
-const CompanySettingModel = require("../models/company.settings.model")
+const CompanySettingModel = require("../models/company.settings.model");
 
 class WebSocketGateway {
   constructor(server) {
@@ -38,29 +38,58 @@ class WebSocketGateway {
     this.redisSubscriber.on("message", async (channel, message) => {
       const clients = this.activeConnections.get(channel);
       if (!clients) return;
-      
-      const { app_id, company_id, user_id } = JSON.parse(message.toString());
-      
-      let companySettings = await CompanySettingModel.findOne({companyId:company_id}).select("retentionDays");
-      let days = companySettings.retentionDays || 10;
-      
-      let query = new RustQuery();
-      let data = await query.getDailyActiveUsers(company_id, app_id, days);
-      let data2 = await query.getTrendingEvents(company_id, app_id, days);
-      let data3 = await query.getCountOfEventsByApp(company_id, app_id);
 
-      const response = {
-        type: "QUERIED_DATA",
-        channel,
-        data: {
-          dailyActiveUsers: data,
-          trendingEvents: data2,
-          countOfEventsByApp: data3,
-        },
-      };
+      const { app_id, company_id, user_id } = JSON.parse(message.toString());
+      let query = new RustQuery();
+      let data = null;
+
+      if (channel.includes("user")) {
+        const userSpecificData = await query.getUserSpecificData(
+          company_id,
+          app_id,
+          user_id
+        );
+
+        data = {
+          type: "QUERIED_DATA",
+          channel,
+          data: userSpecificData,
+        };
+        
+      } else {
+        let companySettings = await CompanySettingModel.findOne({
+          companyId: company_id,
+        }).select("retentionDays");
+        let days = companySettings.retentionDays || 10;
+
+        let activeUsers = await query.getDailyActiveUsers(
+          company_id,
+          app_id,
+          days
+        );
+        let trendingEvents = await query.getTrendingEvents(
+          company_id,
+          app_id,
+          days
+        );
+        let countOfEvents = await query.getCountOfEventsByApp(
+          company_id,
+          app_id
+        );
+
+        data = {
+          type: "QUERIED_DATA",
+          channel,
+          data: {
+            dailyActiveUsers: activeUsers,
+            trendingEvents: trendingEvents,
+            countOfEventsByApp: countOfEvents,
+          },
+        };
+      }
 
       for (const ws of clients) {
-        if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(response));
+        if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(data));
       }
     });
   }
@@ -129,6 +158,7 @@ class WebSocketGateway {
 
   async #restoreSubscriptions() {
     const channels = await this.redisClient.smembers("active_channels");
+    console.log("channels", channels);
     for (const channel of channels) {
       this.activeConnections.set(channel, new Set());
       await this.redisSubscriber.subscribe(channel);

@@ -8,8 +8,11 @@ import Dashboard from "./pages/dashboard";
 import RealtimeStatsPage from "./pages/RealtimeSatatsPage";
 import { Toaster } from 'react-hot-toast';
 import Users from "./pages/Users";
+import UserAnalytics from "./pages/UserAnalytics";
+
 
 export default function App() {
+
   return (
     <BrowserRouter>
       <Toaster
@@ -28,9 +31,11 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/real-time-stats" element={<RealtimeStatsPage />} />
           <Route path="/users-list/:appId" element={<Users />} />
+          <Route path="/user/:appId/:userId/:channel" element={<UserAnalytics />} />
         </Route>
 
       </Routes>
+
     </BrowserRouter>
   );
 }

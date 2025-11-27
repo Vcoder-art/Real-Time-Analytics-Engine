@@ -291,7 +291,7 @@ impl Store {
     ) -> Result<Vec<(String, i64, String)>, Error> {
         let mut qb = QueryBuilder::<Postgres>::new(
             "
-                SELECT event_name, EXTRACT(EPOCH FROM event_ts)*1000 AS ts_ms, payload::TEXT AS payload_json
+                SELECT event_name, (EXTRACT(EPOCH FROM event_ts)*1000)::BIGINT AS ts_ms, payload::TEXT AS payload_json
                 FROM events
                 WHERE
             "
@@ -314,7 +314,7 @@ impl Store {
                 let event_name: String = row.get("event_name");
                 // EXTRACT(EPOCH) returns f64 (double precision), so we retrieve as f64 and cast to i64
                 // we rely on event_ts being NOT NULL
-                let ts_ms: i64 = row.get::<f64, _>("ts_ms").round() as i64;
+                let ts_ms: i64 = row.get::<_, _>("ts_ms");
                 let payload_json: String = row
                     .get::<Option<String>, _>("payload_json")
                     .unwrap_or_else(|| "{}".to_string());
@@ -324,4 +324,6 @@ impl Store {
             .collect();
         Ok(result)
     }
+
+
 }
