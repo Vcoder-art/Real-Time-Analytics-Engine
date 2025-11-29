@@ -70,10 +70,11 @@ export default function Dashboard() {
                     <img width={50} height={50} src={VisionEye} />
                     Vision Pro
                 </h3>
-
+               
                 <div className="flex items-center gap-4">
+                    <span  className="text-sm text-gray-400" onClick={()=>navigate("/meeting-room/skldhjhjxhjhxhj")}>Chat Room</span>
                     <span className="text-sm text-gray-400">
-                        {user?.company?.email || "Anonymous"}
+                        {user?.user?.email || "Anonymous"}
                     </span>
                     <IoSettingsOutline size={25} onClick={()=>setSettingsOpen(true)} />
                 </div>

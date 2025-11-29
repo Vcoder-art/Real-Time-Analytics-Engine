@@ -2,7 +2,7 @@ const { WebSocketServer } = require("ws");
 const { Redis } = require("ioredis");
 const { RustQuery } = require("../rust-query/rust-query");
 const CompanySettingModel = require("../models/company.settings.model");
-
+const MessageModel = require("../models/chat.message.model")
 class WebSocketGateway {
   constructor(server) {
     this.wss = new WebSocketServer({ server });
@@ -23,9 +23,36 @@ class WebSocketGateway {
 
       ws.on("message", (msg) => {
         try {
-          const { action, channel } = JSON.parse(msg.toString());
+          const { action, channel, text, sender } = JSON.parse(msg.toString());
+
           if (action === "subscribe") this.subscribe(ws, channel);
           if (action === "unsubscribe") this.unsubscribe(ws, channel);
+
+          if (action === "chat_message") {
+            if (!channel || !text) {
+              return ws.send(
+                JSON.stringify({ type: "error", msg: "Invalid chat message." })
+              );
+            }
+            
+            const companyId = channel.split(":")[1];
+
+            const chatPayload = {
+              type: "chat_message",
+              channel,
+              data: {
+                message: text,
+                sender: sender || anonymous,
+                timeStamp: Date.now(),
+              },
+            };
+            
+
+             
+            // Publish to redis so ALL subscribed clients get it
+            this.redisClient.publish(channel, JSON.stringify(chatPayload));
+
+          }
         } catch (err) {
           console.error("Invalid message:", err);
         }
@@ -39,7 +66,22 @@ class WebSocketGateway {
       const clients = this.activeConnections.get(channel);
       if (!clients) return;
 
-      const { app_id, company_id, user_id } = JSON.parse(message.toString());
+      let parsed = null;
+      try {
+        parsed = JSON.parse(message.toString());
+      } catch (_) {
+        parsed = { raw: message };
+      }
+
+      //Detect Chat Message and send directly
+      if (parsed.type === "chat_message") {
+        for (const ws of clients) {
+          if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(parsed));
+        }
+        return;
+      }
+
+      const { app_id, company_id, user_id } = parsed;
       let query = new RustQuery();
       let data = null;
 
@@ -55,12 +97,16 @@ class WebSocketGateway {
           channel,
           data: userSpecificData,
         };
-        
       } else {
         let companySettings = await CompanySettingModel.findOne({
           companyId: company_id,
         }).select("retentionDays");
-        let days = companySettings.retentionDays || 10;
+
+        let days = 10;
+
+        if (companySettings || companySettings?.retentionDays) {
+          days = companySettings?.retentionDays;
+        }
 
         let activeUsers = await query.getDailyActiveUsers(
           company_id,

@@ -1,5 +1,8 @@
 const CompanyModel = require("../models/company.model.js");
-const jwt = require("jsonwebtoken")
+const EmployeeModel = require("../models/employee.model.js");
+const { generateUserId } = require("../utils/generateId.js");
+const ChatGroup = require("../models/chat.group.model.js");
+const jwt = require("jsonwebtoken");
 
 async function registerCompany(req, res) {
   const { name, email, password, phone, address } = req.body;
@@ -20,10 +23,27 @@ async function registerCompany(req, res) {
     const company = await CompanyModel.create({
       name,
       email,
-      password,
       phone,
       address,
     });
+
+    const adminUser = await EmployeeModel.create({
+      companyId: company._id,
+      email,
+      name,
+      role: "admin",
+      userId: generateUserId(),
+      password,
+    });
+
+    await ChatGroup.create({
+      companyId: company._id,
+      members: [adminUser._id],
+      meta: {
+        companyName: company.name,
+      },
+    });
+
     return res.status(201).json({
       message: "Company registered successfully",
       company: {
@@ -33,7 +53,7 @@ async function registerCompany(req, res) {
       },
     });
   } catch (Err) {
-    console.error("❌ Registration error:", err);
+    console.error("❌ Registration error:", Err);
     res.status(500).json({ message: "Server error" });
   }
 }
@@ -48,32 +68,37 @@ async function login(req, res) {
     }
 
     // Check if company exists
-    const company = await CompanyModel.findOne({ email });
-    if (!company) {
-      return res.status(404).json({ msg: "Company not found" });
+    const employee = await EmployeeModel.findOne({ email });
+    if (!employee) {
+      return res.status(404).json({ msg: "User not found" });
     }
 
     // Validate password
-    const isMatch = await company.comparePassword(password)
+    const isMatch = await employee.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
     // Generate JWT
     const token = jwt.sign(
-      { companyId: company._id, name: company.name },
+      {
+        companyId: employee.companyId,
+        email: employee.email,
+        userId: employee.userId,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-
+    
     // Respond
     res.json({
       success: true,
       token,
-      company: {
-        id: company._id,
-        name: company.name,
-        email: company.email,
+      user: {
+        id: employee.userId,
+        name: employee.name,
+        email: employee.email,
+        companyId:employee.companyId
       },
     });
   } catch (err) {
@@ -82,4 +107,4 @@ async function login(req, res) {
   }
 }
 
-module.exports = { registerCompany,login };
+module.exports = { registerCompany, login };

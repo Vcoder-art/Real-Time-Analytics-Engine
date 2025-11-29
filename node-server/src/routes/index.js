@@ -7,4 +7,6 @@ router.use("/events",require("./events.routes"));
 router.use("/channels",require("./channels.routes"));
 router.use("/settings",require("./company.settings.routes"));
 router.use("/company-users",require("./company.users.routes"));
+router.use("/employee",require("./employee.routes"));
+router.use("/chat",require("./chat.routes"))
 module.exports = router

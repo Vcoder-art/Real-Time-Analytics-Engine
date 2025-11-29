@@ -71,7 +71,7 @@ export default function UserAnalytics() {
 
                 <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-400">
-                        {user?.company?.email || "Anonymous"}
+                        {user?.user?.email || "Anonymous"}
                     </span>
                 </div>
             </header>

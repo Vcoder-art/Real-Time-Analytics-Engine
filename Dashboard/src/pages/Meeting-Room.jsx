@@ -1,21 +1,30 @@
 import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "../components/Button"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import VisionEye from "../assets/icons-eye.png";
 import UsersList from "../components/UsersList"
+import ChatPanel from "../components/Chat-Panel";
+import axiosInstance from "../apis/axiosInstance";
 
-export default function Users() {
+export default function MeetingRoom() {
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
-    const { appId } = useParams();
+    const [group, setGroup] = useState("");
 
     useEffect(() => {
         if (!user) navigate("/login");
     }, [user, navigate]);
 
+    useEffect(() => {
+        const fetchMeetingGroup = async () => {
+            const response = await axiosInstance.get("http://localhost:4000/api/chat/get-group")
+            setGroup(response.data.group)
+        }
+        fetchMeetingGroup();
+    })
+
     return (
-        <div style={{ width: "128%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+        <div style={{ width: "194%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
             {/* Header */}
             <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-gray-900/70 backdrop-blur-md">
                 <h3 className="text-2xl font-semibold flex items-center gap-2">
@@ -34,14 +43,20 @@ export default function Users() {
             <main className="flex-1 grid grid-cols-12 gap-6 p-8">
                 {/* Sidebar */}
                 <aside className="col-span-3 bg-gray-900 rounded-2xl p-6 shadow-lg">
-                    <h2 className="text-lg font-semibold mb-4">Users Options</h2>
+                    <h2 className="text-lg font-semibold mb-4">Peoples</h2>
                     <ul className="space-y-3">
+                        {group && group.members.map((m) => {
+                            return <li
+                                className="p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition flex justify-between items-center"
+                            >                                <span>{m.name}</span>
+                            </li>
+                        })}
                     </ul>
                 </aside>
 
                 {/* Main Content */}
                 <section className="col-span-9 bg-gray-900 rounded-2xl p-8 shadow-lg">
-                    <UsersList appId={appId} />
+                    <ChatPanel group={group} />
                 </section>
             </main>
         </div>

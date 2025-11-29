@@ -56,6 +56,7 @@ class WebSocketService {
     this.ws.send(JSON.stringify({ action: "unsubscribe", channel }));
     this.callbacks.delete(channel);
   }
+
 }
 
 export const ws = new WebSocketService();

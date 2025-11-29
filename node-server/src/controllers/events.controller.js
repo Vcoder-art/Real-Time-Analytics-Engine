@@ -58,7 +58,10 @@ async function getInitialAggregatedResults(req, res) {
     }
 
     const companySettings = await CompanySettingModel.findOne({ companyId });
-    const days = companySettings.retentionDays || 10;
+    let days = 10;
+    if (companySettings || companySettings?.retentionDays) {
+      days = companySettings?.retentionDays;
+    }
 
     let query = new RustQuery();
     let data = await query.getDailyActiveUsers(companyId, appId, days);
@@ -77,6 +80,7 @@ async function getInitialAggregatedResults(req, res) {
 
     res.json(payload);
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ msg: "Failed to fetch initial data.", success: false });
