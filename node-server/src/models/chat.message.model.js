@@ -5,6 +5,7 @@ const ChatMessageSchema = new mongoose.Schema({
   groupId: { type: mongoose.Schema.Types.ObjectId, ref: "ChatGroup", required: true, index: true },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: "Employee", required: true, index: true },
   senderUserId: { type: String }, // analytics user id for quick reference
+  senderName:{type:String,required: true},
   text: { type: String, required: true },
   deleted: { type: Boolean, default: false },
   meta: { type: mongoose.Schema.Types.Mixed, default: {} },

@@ -21,9 +21,18 @@ class WebSocketGateway {
     this.wss.on("connection", (ws) => {
       console.log("🟢 Client connected");
 
-      ws.on("message", (msg) => {
+      ws.on("message", async (msg) => {
         try {
-          const { action, channel, text, sender } = JSON.parse(msg.toString());
+          const { 
+            action, 
+            channel, 
+            text, 
+            senderName, 
+            groupId,
+            userRefId,
+            userId,
+            companyId
+          } = JSON.parse(msg.toString());
 
           if (action === "subscribe") this.subscribe(ws, channel);
           if (action === "unsubscribe") this.unsubscribe(ws, channel);
@@ -35,20 +44,25 @@ class WebSocketGateway {
               );
             }
             
-            const companyId = channel.split(":")[1];
+             await MessageModel.create({
+              companyId,
+              groupId,
+              sender: userRefId,
+              senderUserId: userId,
+              senderName,
+              text
+            })
 
             const chatPayload = {
               type: "chat_message",
               channel,
               data: {
                 message: text,
-                sender: sender || anonymous,
+                sender: senderName || anonymous,
                 timeStamp: Date.now(),
               },
             };
             
-
-             
             // Publish to redis so ALL subscribed clients get it
             this.redisClient.publish(channel, JSON.stringify(chatPayload));
 

@@ -96,9 +96,11 @@ async function login(req, res) {
       token,
       user: {
         id: employee.userId,
+        _id:employee._id,
         name: employee.name,
         email: employee.email,
-        companyId:employee.companyId
+        companyId:employee.companyId,
+        role:employee.role
       },
     });
   } catch (err) {

@@ -5,15 +5,15 @@ import {useSelector} from "react-redux"
 import { ws } from "../services/ws"
 
 
-export default function ChatPanel() {
+export default function ChatPanel({groupId,initialMessages}) {
 
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(initialMessages);
     const { user } = useSelector((state) => state.auth); 
     const messagesEndRef = useRef(null);
     const channel = "chat:"+user?.user?.companyId;
     const currentUserName = user?.user?.name;
-
-    console.log("messages",messages)
+    const currentUserRefId = user?.user?._id;
+    console.log("messages", messages)
 
     // connect and subscribe
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function ChatPanel() {
         ws.subscribe(channel, (e) => {
             if (e.data) {
                 const data = e.data;
-                setMessages(prev => [...prev, { text: data.message, sender: data.sender, timestamp: new Date(data.timeStamp) }]);
+                setMessages(prev => [...prev, { text: data.message, senderName: data.senderName }]);
             }
         })
 
@@ -38,7 +38,6 @@ export default function ChatPanel() {
     // scroll to bottom when messages change
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-       
     }, [messages]);
 
     // send message helper (via WS)
@@ -47,8 +46,11 @@ export default function ChatPanel() {
             action: "chat_message",
             channel,
             text,
-            sender: currentUserName,
-            timestamp: Date.now()
+            senderName: currentUserName,
+            groupId,
+            userRefId:user.user._id,
+            userId:user.user.id,
+            companyId:user.user.companyId
         };
 
         try {
@@ -78,7 +80,7 @@ export default function ChatPanel() {
             <div className="p-4 overflow-y-auto flex-1 space-y-3" style={{ minHeight: 200 }}>
                 {messages.length === 0 && <div className="text-gray-500 text-center mt-6">No messages yet — say hi 👋</div>}
                 {messages.map((m, idx) => (
-                    <MessageItem key={idx + "-" + (m.timestamp || idx)} msg={m} isOwn={m.sender === currentUserName} />
+                    <MessageItem key={idx + "-" + (m.timestamp || idx)} msg={m} isOwn={m.sender === currentUserRefId} />
                 ))}
                 <div ref={messagesEndRef} />
             </div>
