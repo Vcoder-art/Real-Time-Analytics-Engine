@@ -8,7 +8,12 @@ const ChatMessageSchema = new mongoose.Schema({
   senderName:{type:String,required: true},
   text: { type: String, required: true },
   deleted: { type: Boolean, default: false },
+  type: {type:String,enum:["text","file"],default:"text"},
+  fileUrl: {type:String},
+  fileName: {type:String},
+  fileSize: {type:String},
   meta: { type: mongoose.Schema.Types.Mixed, default: {} },
+
 }, { timestamps: true });
 
 // Common query patterns

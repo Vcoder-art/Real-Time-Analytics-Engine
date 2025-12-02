@@ -1,16 +1,18 @@
 const ChatGroupModel = require("../models/chat.group.model");
 const MessageModel = require("../models/chat.message.model");
-const mongoose = require("mongoose");
+const { redisHelper } = require("../utils/redis-helper");
+const { ObjectId } = require("mongoose").Types;
 
 
 async function getGroups(req, res) {
   try {
     const companyId = req.companyId;
 
-    const group = await ChatGroupModel.findOne({ companyId }).populate(
-      "members",
-      "name -_id"
-    ); // return only name, remove _id
+    const group = await ChatGroupModel.findOne({ companyId })
+      .populate("members", "name -_id")
+      .lean(); // return only name, remove _id
+
+    group.channel = `chat:group:${group._id}`;
 
     return res.json({
       success: true,
@@ -22,12 +24,10 @@ async function getGroups(req, res) {
   }
 }
 
-
 async function getInitialMessageByGroup(req, res) {
   try {
     const { groupId } = req.params;
 
-  
     if (!groupId) {
       return res.status(400).json({
         success: false,
@@ -35,7 +35,7 @@ async function getInitialMessageByGroup(req, res) {
       });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    if (!ObjectId.isValid(groupId)) {
       return res.status(400).json({
         success: false,
         msg: "Invalid Group ID format.",
@@ -48,7 +48,12 @@ async function getInitialMessageByGroup(req, res) {
         text: 1,
         sender: 1,
         senderName: 1,
-        createdAt: 1,
+        createdAt: 1, 
+        fileUrl: 1,
+        fileName: 1,
+        fileSize:1,
+        type:1, 
+       _id: 0,
       }
     )
       .sort({ createdAt: 1 }) // oldest first → ideal for initial chat load
@@ -59,7 +64,6 @@ async function getInitialMessageByGroup(req, res) {
       msg: "Messages fetched successfully.",
       data: messages,
     });
-
   } catch (err) {
     console.error("Failed to load initial messages:", err);
 
@@ -70,5 +74,65 @@ async function getInitialMessageByGroup(req, res) {
   }
 }
 
+async function fileUploader(req, res) {
+  const { groupId, sender, senderName, senderUserId } = req.body;
 
-module.exports = { getGroups, getInitialMessageByGroup };
+  const companyId = req.companyId;
+
+  if (
+    !ObjectId.isValid(groupId) ||
+    !ObjectId.isValid(sender) ||
+    !senderName ||
+    !senderUserId
+  ) {
+    return res.status(400).json({
+      msg: "All fields are required.",
+      success: false,
+    });
+  }
+
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, msg: "No file uploaded" });
+    }
+
+    const fileMessage = await MessageModel.create({
+      companyId,
+      groupId,
+      sender,
+      senderName,
+      text: "placeholder",
+      type: "file",
+      senderUserId,
+      fileUrl:`/uploads/${req.file.filename}`,
+      fileName:req.file.originalname,
+      fileSize:req.file.size,
+    });
+
+    const fileData = {
+      fileUrl: `/uploads/${req.file.filename}`,
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      sender,
+      senderName,
+      groupId,
+      type: "file",
+      actionType: "chat_message",
+      createdAt: fileMessage.createdAt,
+    };
+
+    const channel = `chat:group:${groupId}`;
+    redisHelper.redisClient.publish(channel, JSON.stringify(fileData));
+
+    return res.json({
+      success: true,
+      msg: "File uploaded",
+      data: fileData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, msg: "Upload failed" });
+  }
+}
+
+module.exports = { getGroups, getInitialMessageByGroup, fileUploader };

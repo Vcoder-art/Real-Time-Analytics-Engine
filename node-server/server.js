@@ -4,13 +4,18 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const routes = require("./src/routes");
 const { WebSocketGateway } = require("./src/ws/wsServer");
+const {redisHelper} = require("./src/utils/redis-helper")
+const path = require("path")
 const http = require("http");
 
 const app = express();
 const server = http.createServer(app);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+console.log(__dirname)
+
 
 // Initialize WebSocket gateway
-new WebSocketGateway(server);
+new WebSocketGateway(server,redisHelper);
 
 dotenv.config();
 app.use(cors());

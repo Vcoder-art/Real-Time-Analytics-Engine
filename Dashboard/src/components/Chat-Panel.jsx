@@ -1,30 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 import MessageItem from "./Message";
 import Composer from "./Composer";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux"
 import { ws } from "../services/ws"
+import axiosInstance from "../apis/axiosInstance";
+import toast from "react-hot-toast";
 
 
-export default function ChatPanel({groupId,initialMessages}) {
 
-    const [messages, setMessages] = useState(initialMessages);
-    const { user } = useSelector((state) => state.auth); 
+export default function ChatPanel({ groupId, channel }) {
+
+    const [messages, setMessages] = useState([]);
+    const { user } = useSelector((state) => state.auth);
     const messagesEndRef = useRef(null);
-    const channel = "chat:"+user?.user?.companyId;
     const currentUserName = user?.user?.name;
     const currentUserRefId = user?.user?._id;
-    console.log("messages", messages)
+    const currentUserId = user?.user?.id;
+
 
     // connect and subscribe
     useEffect(() => {
-      
-        ws.subscribe(channel, (e) => {
-            if (e.data) {
-                const data = e.data;
-                setMessages(prev => [...prev, { text: data.message, senderName: data.senderName }]);
-            }
-        })
-
+        if (groupId && channel) {
+            fetchInitialMessages()
+            ws.subscribe(channel, (e) => {
+                if (e.data) {
+                    const data = e.data;
+                    setMessages(prev => [...prev, data]);
+                }
+            })
+        }
         return () => {
             // cleanup
             try {
@@ -33,12 +37,24 @@ export default function ChatPanel({groupId,initialMessages}) {
                 console.log("Closing Error", err)
             }
         };
-    }, [channel]);
+    }, [groupId]);
 
     // scroll to bottom when messages change
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages]);
+
+
+    const fetchInitialMessages = async () => {
+        try {
+            const response = await axiosInstance.get(`http://localhost:4000/api/chat/get-initial-messages/${groupId}`)
+            setMessages(response.data.data)
+        } catch (err) {
+            console.log(err)
+            setMessages([])
+        }
+    }
+
 
     // send message helper (via WS)
     const sendMessage = (text) => {
@@ -48,9 +64,9 @@ export default function ChatPanel({groupId,initialMessages}) {
             text,
             senderName: currentUserName,
             groupId,
-            userRefId:user.user._id,
-            userId:user.user.id,
-            companyId:user.user.companyId
+            userRefId: user.user._id,
+            userId: user.user.id,
+            companyId: user.user.companyId
         };
 
         try {
@@ -61,7 +77,27 @@ export default function ChatPanel({groupId,initialMessages}) {
         }
     };
 
+    const sendFile = async (file) => {
+        //groupId, sender, senderName, senderUserId   
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("groupId", groupId);
+        formData.append("sender", currentUserRefId);
+        formData.append("senderName", currentUserName);
+        formData.append("senderUserId", currentUserId);
+        try {
+            await axiosInstance.post(`http://localhost:4000/api/chat/upload-file`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            
+        } catch (err) {
+            console.log(err)
+            toast.error("Failed to upload file.");
+        }
 
+    }
 
     return (
         <div className="flex flex-col h-full bg-gray-900 rounded-md border border-gray-800">
@@ -69,7 +105,7 @@ export default function ChatPanel({groupId,initialMessages}) {
             <div className="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
                 <div>
                     <div className="text-white font-semibold">Team Chat</div>
-                    <div className="text-xs text-gray-400">{channel}</div>
+                    <div className="text-xs text-gray-400">{channel} -- </div>
                 </div>
                 <div className="text-sm text-gray-400">
                     <span className="text-green-400">Live</span>
@@ -86,7 +122,7 @@ export default function ChatPanel({groupId,initialMessages}) {
             </div>
 
             {/* Composer */}
-            <Composer onSend={sendMessage} />
+            <Composer onSendMessage={sendMessage} onSendFile={sendFile} />
         </div>
     );
 }

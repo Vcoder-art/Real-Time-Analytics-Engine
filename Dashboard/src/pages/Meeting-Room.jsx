@@ -8,7 +8,6 @@ import axiosInstance from "../apis/axiosInstance";
 export default function MeetingRoom() {
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
-    const [messages,setMessages] = useState([]);
     const [group, setGroup] = useState("");
 
     useEffect(() => {
@@ -19,17 +18,11 @@ export default function MeetingRoom() {
         const fetchMeetingGroup = async () => {
             const response = await axiosInstance.get("http://localhost:4000/api/chat/get-group")
             setGroup(response.data.group)
-            fetchInitialMessages(response.data.group._id);
         }
 
-        const fetchInitialMessages = async (groupId)=> {
-           const response =   await axiosInstance.get(`http://localhost:4000/api/chat/get-initial-messages/${groupId}`)
-           console.log(response)
-           setMessages(response.data.data)
-        }
         fetchMeetingGroup();
 
-    },[])
+    }, [])
 
     return (
         <div style={{ width: "194%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
@@ -64,7 +57,7 @@ export default function MeetingRoom() {
 
                 {/* Main Content */}
                 <section className="col-span-9 bg-gray-900 rounded-2xl p-8 shadow-lg">
-                    <ChatPanel groupId={group._id} initialMessages={messages} />
+                    <ChatPanel groupId={group._id} channel={group.channel} />
                 </section>
             </main>
         </div>

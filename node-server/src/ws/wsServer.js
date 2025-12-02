@@ -1,14 +1,13 @@
 const { WebSocketServer } = require("ws");
-const { Redis } = require("ioredis");
 const { RustQuery } = require("../rust-query/rust-query");
 const CompanySettingModel = require("../models/company.settings.model");
 const MessageModel = require("../models/chat.message.model")
 class WebSocketGateway {
-  constructor(server) {
+  constructor(server,redis) {
     this.wss = new WebSocketServer({ server });
 
-    this.redisSubscriber = new Redis({ host: "127.0.0.1", port: 6379 });
-    this.redisClient = new Redis({ host: "127.0.0.1", port: 6379 });
+    this.redisSubscriber = redis.redisSubscriber;
+    this.redisClient = redis.redisClient;
     this.activeConnections = new Map();
 
     this.#setup();
@@ -44,7 +43,7 @@ class WebSocketGateway {
               );
             }
             
-             await MessageModel.create({
+            const messageDetails = await MessageModel.create({
               companyId,
               groupId,
               sender: userRefId,
@@ -57,9 +56,10 @@ class WebSocketGateway {
               type: "chat_message",
               channel,
               data: {
-                message: text,
-                sender: senderName || anonymous,
-                timeStamp: Date.now(),
+                sender:messageDetails.sender,
+                text,
+                senderName: senderName,
+                createdAt: messageDetails.createdAt,
               },
             };
             
@@ -88,7 +88,7 @@ class WebSocketGateway {
       }
 
       //Detect Chat Message and send directly
-      if (parsed.type === "chat_message") {
+      if (parsed.actionType === "chat_message") {
         for (const ws of clients) {
           if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(parsed));
         }
