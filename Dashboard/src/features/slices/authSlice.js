@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import authService from "./authService";
+import authService from "../services/authService";
 
 //intial State
 const user = JSON.parse(localStorage.getItem("analytics_user"));
@@ -8,6 +8,7 @@ const initialState = {
   user: user ? user : null,
   loading: false,
   error: null,
+  setting: false,
 };
 
 // Async thunks
@@ -37,14 +38,25 @@ export const register = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk("auth/logout", async () => {
-  await authService.logout();
-});
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    openSettings: (state) => {
+      state.setting = true;
+    },
+    closeSettings: (state) => {
+      state.setting = false;
+    },
+    toggleSettings: (state) => {
+      state.setting = !state.setting;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.setting = false;
+      localStorage.removeItem("analytics_user");
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -62,10 +74,10 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload;
       })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = null;
-      });
   },
 });
+
+export const { closeSettings, openSettings, toggleSettings , logout } =
+  authSlice.actions;
 
 export default authSlice.reducer;

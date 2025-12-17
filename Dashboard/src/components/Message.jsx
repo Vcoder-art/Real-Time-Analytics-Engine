@@ -56,28 +56,32 @@ export default function MessageItem({ msg, isOwn }) {
             {/* File Type Previews */}
             {fileType === "image" && (
               <img
-                src={"http://localhost:4000"+msg.fileUrl}
+                src={"http://localhost:4000" + msg.fileUrl}
                 alt="sent file"
                 className="max-h-60 rounded-lg border border-gray-700"
               />
             )}
 
             {fileType === "video" && (
-              <video
-                controls
-                className="max-h-60 rounded-lg border border-gray-700"
-              >
-                <source src={msg.fileUrl} />
-              </video>
+              <div className="bg-gray-700 p-3 rounded-md text-sm flex items-center justify-between">
+                <span>📽️ {msg.fileName}</span>
+                <a
+                  href={"http://localhost:4000" + msg.fileUrl}
+                  download
+                  className="px-2 py-1  text-white rounded text-xs"
+                >
+                  Download
+                </a>
+              </div>
             )}
 
             {fileType === "pdf" && (
               <div className="bg-gray-700 p-3 rounded-md text-sm flex items-center justify-between">
                 <span>📄 {msg.fileName}</span>
                 <a
-                  href={msg.fileUrl}
+                  href={"http://localhost:4000" + msg.fileUrl}
                   download
-                  className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+                  className="px-2 py-1 text-white rounded text-xs"
                 >
                   Download
                 </a>
@@ -89,9 +93,9 @@ export default function MessageItem({ msg, isOwn }) {
               <div className="bg-gray-700 p-3 rounded-md text-sm flex justify-between items-center">
                 <span>📎 {msg.fileName}</span>
                 <a
-                  href={msg.fileUrl}
+                  href={"http://localhost:4000" + msg.fileUrl}
                   download
-                  className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+                  className="px-2 py-1  text-white rounded text-xs"
                 >
                   Download
                 </a>

@@ -1,6 +1,6 @@
 // src/components/CreateAppModal.jsx
 import { useState } from "react";
-import {createApiKeysHttp} from "../features/slices/publicKeysService"
+import {createApiKeysHttp} from "../features/services/publicKeysService"
 
 export default function CreateAppModal({ isOpen, onClose, onAppCreated }) {
   const [appName, setAppName] = useState("");

@@ -10,14 +10,14 @@ async function registerCompany(req, res) {
   if (!name || !email || !password) {
     return res
       .status(400)
-      .json({ message: "Name, email, and password are required" });
+      .json({ msg: "Name, email, and password are required" });
   }
 
   try {
     const existing = await CompanyModel.findOne({ email });
 
     if (existing) {
-      return res.status(400).json({ message: "Company already registered" });
+      return res.status(400).json({ msg: "Company already registered" });
     }
 
     const company = await CompanyModel.create({
@@ -45,7 +45,7 @@ async function registerCompany(req, res) {
     });
 
     return res.status(201).json({
-      message: "Company registered successfully",
+      msg: "Company registered successfully",
       company: {
         id: company._id,
         name: company.name,
@@ -54,7 +54,7 @@ async function registerCompany(req, res) {
     });
   } catch (Err) {
     console.error("❌ Registration error:", Err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ msg: "Server error" });
   }
 }
 
@@ -69,9 +69,19 @@ async function login(req, res) {
 
     // Check if company exists
     const employee = await EmployeeModel.findOne({ email });
+
+    
     if (!employee) {
       return res.status(404).json({ msg: "User not found" });
     }
+
+    if (!employee.isActive) {
+      return res.status(400).json({
+        success: false,
+        msg: "Your account is deactivated please contact to company owner.",
+      });
+    }
+
 
     // Validate password
     const isMatch = await employee.comparePassword(password);
@@ -89,18 +99,18 @@ async function login(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    
+
     // Respond
     res.json({
       success: true,
       token,
       user: {
         id: employee.userId,
-        _id:employee._id,
+        _id: employee._id,
         name: employee.name,
         email: employee.email,
-        companyId:employee.companyId,
-        role:employee.role
+        companyId: employee.companyId,
+        role: employee.role,
       },
     });
   } catch (err) {

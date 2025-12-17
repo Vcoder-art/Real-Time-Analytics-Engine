@@ -1,14 +1,15 @@
 const { WebSocketServer } = require("ws");
-const { RustQuery } = require("../rust-query/rust-query");
-const CompanySettingModel = require("../models/company.settings.model");
-const MessageModel = require("../models/chat.message.model")
+const EventHandler = require("./EventHandler");
+const ChatHandler = require("./ChatHandler");
+
 class WebSocketGateway {
-  constructor(server,redis) {
+  constructor(server, redis) {
     this.wss = new WebSocketServer({ server });
 
     this.redisSubscriber = redis.redisSubscriber;
     this.redisClient = redis.redisClient;
     this.activeConnections = new Map();
+    this.callSockets = new Map();
 
     this.#setup();
   }
@@ -22,51 +23,44 @@ class WebSocketGateway {
 
       ws.on("message", async (msg) => {
         try {
-          const { 
-            action, 
-            channel, 
-            text, 
-            senderName, 
+          const {
+            action,
+            channel,
+            text,
+            senderName,
             groupId,
             userRefId,
             userId,
-            companyId
+            companyId,
+            state
           } = JSON.parse(msg.toString());
 
           if (action === "subscribe") this.subscribe(ws, channel);
           if (action === "unsubscribe") this.unsubscribe(ws, channel);
-
-          if (action === "chat_message") {
-            if (!channel || !text) {
-              return ws.send(
-                JSON.stringify({ type: "error", msg: "Invalid chat message." })
-              );
-            }
-            
-            const messageDetails = await MessageModel.create({
+          // Rs means redis
+          ChatHandler.publishChatMessageRs(
+            {
+              action,
+              channel,
+              text,
               companyId,
               groupId,
-              sender: userRefId,
-              senderUserId: userId,
+              userRefId,
+              userId,
               senderName,
-              text
-            })
+            },
+            ws
+          );
+          ChatHandler.sendTypingEvent(
+            channel,
+            userId,
+            senderName,
+            this.activeConnections,
+            state,
+            action,
+            ws
+          );
 
-            const chatPayload = {
-              type: "chat_message",
-              channel,
-              data: {
-                sender:messageDetails.sender,
-                text,
-                senderName: senderName,
-                createdAt: messageDetails.createdAt,
-              },
-            };
-            
-            // Publish to redis so ALL subscribed clients get it
-            this.redisClient.publish(channel, JSON.stringify(chatPayload));
-
-          }
         } catch (err) {
           console.error("Invalid message:", err);
         }
@@ -86,71 +80,10 @@ class WebSocketGateway {
       } catch (_) {
         parsed = { raw: message };
       }
-
+      
       //Detect Chat Message and send directly
-      if (parsed.actionType === "chat_message") {
-        for (const ws of clients) {
-          if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(parsed));
-        }
-        return;
-      }
-
-      const { app_id, company_id, user_id } = parsed;
-      let query = new RustQuery();
-      let data = null;
-
-      if (channel.includes("user")) {
-        const userSpecificData = await query.getUserSpecificData(
-          company_id,
-          app_id,
-          user_id
-        );
-
-        data = {
-          type: "QUERIED_DATA",
-          channel,
-          data: userSpecificData,
-        };
-      } else {
-        let companySettings = await CompanySettingModel.findOne({
-          companyId: company_id,
-        }).select("retentionDays");
-
-        let days = 10;
-
-        if (companySettings || companySettings?.retentionDays) {
-          days = companySettings?.retentionDays;
-        }
-
-        let activeUsers = await query.getDailyActiveUsers(
-          company_id,
-          app_id,
-          days
-        );
-        let trendingEvents = await query.getTrendingEvents(
-          company_id,
-          app_id,
-          days
-        );
-        let countOfEvents = await query.getCountOfEventsByApp(
-          company_id,
-          app_id
-        );
-
-        data = {
-          type: "QUERIED_DATA",
-          channel,
-          data: {
-            dailyActiveUsers: activeUsers,
-            trendingEvents: trendingEvents,
-            countOfEventsByApp: countOfEvents,
-          },
-        };
-      }
-
-      for (const ws of clients) {
-        if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(data));
-      }
+      if (await ChatHandler.publishToGroupWs(parsed, clients)) return;
+      EventHandler.getQueriedDataAndPublishToWs(parsed, channel, clients);
     });
   }
 
@@ -203,6 +136,8 @@ class WebSocketGateway {
   }
 
   async #cleanup(ws) {
+    if (ws.userId) this.callSockets.delete(ws.userId);
+
     for (const [channel, clients] of this.activeConnections.entries()) {
       if (clients.has(ws)) {
         clients.delete(ws);

@@ -1,0 +1,1110 @@
+[{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794baf"
+  },
+  "classcode": 2,
+  "classname": "Equity - Sectoral Fund - Auto",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Auto",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb0"
+  },
+  "classcode": 3,
+  "classname": "Equity - Sectoral Fund - Banks & Financial Services",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Banks & Financial Services",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb1"
+  },
+  "classcode": 4,
+  "classname": "Equity - Sectoral Fund - Media & Entertainment",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Media & Entertainment",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb2"
+  },
+  "classcode": 5,
+  "classname": "Equity - Sectoral Fund - Energy & Power",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Energy & Power",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb3"
+  },
+  "classcode": 6,
+  "classname": "Equity - Sectoral Fund - Technology",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Technology",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb4"
+  },
+  "classcode": 7,
+  "classname": "Index Funds - Nifty",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Index Funds",
+  "sub_category": "Index - Nifty",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb5"
+  },
+  "classcode": 8,
+  "classname": "Equity - ELSS",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Equity Linked Savings Scheme",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb6"
+  },
+  "classcode": 9,
+  "classname": "Equity - Sectoral Fund - Consumption",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Consumption",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb7"
+  },
+  "classcode": 10,
+  "classname": "Equity - Sectoral Fund - Pharma & Health Care",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Pharma & Health Care",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb8"
+  },
+  "classcode": 11,
+  "classname": "Real Estate",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Real Estate",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bb9"
+  },
+  "classcode": 12,
+  "classname": "Hybrid - Aggressive Hybrid Fund",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Aggressive Hybrid Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bba"
+  },
+  "classcode": 13,
+  "classname": "Hybrid - Balanced Hybrid Fund",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Balanced Hybrid Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bbb"
+  },
+  "classcode": 14,
+  "classname": "Hybrid - Conservative Hybrid Fund",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Conservative Hybrid Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bbc"
+  },
+  "classcode": 15,
+  "classname": "Capital Protection",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Capital Protection Funds",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bbd"
+  },
+  "classcode": 16,
+  "classname": "Debt - Short Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Short Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bbe"
+  },
+  "classcode": 17,
+  "classname": "Debt - Ultra Short Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Ultra Short Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bbf"
+  },
+  "classcode": 18,
+  "classname": "Debt - Long Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Long Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc0"
+  },
+  "classcode": 19,
+  "classname": "Hybrid - Arbitrage Fund",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Arbitrage Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc1"
+  },
+  "classcode": 20,
+  "classname": "Debt -Interval Funds - Monthly",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Debt -Interval Funds",
+  "sub_category": "Interval Funds - Monthly",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc2"
+  },
+  "classcode": 21,
+  "classname": "Fixed Maturity Plans",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Fixed Maturity Plans",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc3"
+  },
+  "classcode": 23,
+  "classname": "Debt - Gilt Fund with 10 year constant duration",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Gilt",
+  "sub_category": "Gilt Fund with 10 year constant duration",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc4"
+  },
+  "classcode": 24,
+  "classname": "Debt - Liquid Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Liquid",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc5"
+  },
+  "classcode": 26,
+  "classname": "ETFs - Gold",
+  "asset_code": 4,
+  "asset_type": "Commodity",
+  "category": "ETFs",
+  "sub_category": "Gold",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc6"
+  },
+  "classcode": 28,
+  "classname": "Debt - Floater Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Floating Rate",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc7"
+  },
+  "classcode": 31,
+  "classname": "Equity - Large Cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Large Cap Fund",
+  "sub_category": "Large Cap Fund",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc8"
+  },
+  "classcode": 32,
+  "classname": "Equity - Mid Cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Mid Cap Fund",
+  "sub_category": "Mid Cap Fund",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bc9"
+  },
+  "classcode": 33,
+  "classname": "Equity - Small cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Small cap Fund",
+  "sub_category": "Small cap Fund",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bca"
+  },
+  "classcode": 34,
+  "classname": "Index Funds - Sensex",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Index Funds",
+  "sub_category": "Index - Sensex",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bcb"
+  },
+  "classcode": 35,
+  "classname": "Equity - Dividend Yield Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Dividend Yield",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bcc"
+  },
+  "classcode": 36,
+  "classname": "Equity - Contra Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Contra",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bcd"
+  },
+  "classcode": 37,
+  "classname": "Equity - Thematic Fund - MNC",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Thematic Fund",
+  "sub_category": "MNC",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bce"
+  },
+  "classcode": 38,
+  "classname": "Equity - Thematic Fund - Global",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Thematic Fund",
+  "sub_category": "Global",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bcf"
+  },
+  "classcode": 39,
+  "classname": "Equity - Sectoral Fund - Service Industry",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Service Industry",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd0"
+  },
+  "classcode": 41,
+  "classname": "FoFs (Overseas)",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "FoFs (Overseas)",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd1"
+  },
+  "classcode": 42,
+  "classname": "Equity - Sectoral Fund - Infrastructure ",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Sector Funds",
+  "sub_category": "Infrastructure ",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd2"
+  },
+  "classcode": 43,
+  "classname": "ETFs - Index",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "ETFs",
+  "sub_category": "Index",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd3"
+  },
+  "classcode": 44,
+  "classname": "FoFs (Domestic) - Debt Oriented",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "FoFs (Domestic)",
+  "sub_category": "Debt Oriented",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd4"
+  },
+  "classcode": 45,
+  "classname": "Debt - Medium Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Medium Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd5"
+  },
+  "classcode": 46,
+  "classname": "Debt - Gilt Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Gilt",
+  "sub_category": "Short & Mid Term",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd6"
+  },
+  "classcode": 49,
+  "classname": "Equity - Multi Cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Multi Cap Fund",
+  "sub_category": "Multi Cap Fund",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd7"
+  },
+  "classcode": 50,
+  "classname": "Debt -Interval Funds - Quarterly",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Debt -Interval Funds",
+  "sub_category": "Interval Funds - Quarterly",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd8"
+  },
+  "classcode": 51,
+  "classname": "Debt -Interval Funds - Half Yearly",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Debt -Interval Funds",
+  "sub_category": "Interval Funds - Half Yearly",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bd9"
+  },
+  "classcode": 52,
+  "classname": "Debt -Interval Funds - Yearly",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Debt -Interval Funds",
+  "sub_category": "Interval Funds - Yearly",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bda"
+  },
+  "classcode": 53,
+  "classname": "FoFs (Domestic / Overseas ) - Gold",
+  "asset_code": 4,
+  "asset_type": "Commodity",
+  "category": "FoFs",
+  "sub_category": "Gold",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bdb"
+  },
+  "classcode": 54,
+  "classname": "Hybrid - Multi Asset Allocation",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Multi Asset Allocation",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bdc"
+  },
+  "classcode": 56,
+  "classname": "Debt - Infrastructure",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Sector Funds",
+  "sub_category": "Debt - Infrastructure",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bdd"
+  },
+  "classcode": 57,
+  "classname": "Hybrid - Equity Savings",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Equity Savings",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bde"
+  },
+  "classcode": 61,
+  "classname": "Equity - Large & Mid Cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Large & Mid Cap",
+  "sub_category": "Large & Mid Cap",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bdf"
+  },
+  "classcode": 62,
+  "classname": "Equity - Value Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Value Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be0"
+  },
+  "classcode": 63,
+  "classname": "Equity - Focused Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Focused Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be1"
+  },
+  "classcode": 64,
+  "classname": "Equity - Thematic Fund - Other",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Thematic Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be2"
+  },
+  "classcode": 65,
+  "classname": "Debt - Overnight Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Overnight Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be3"
+  },
+  "classcode": 66,
+  "classname": "Debt - Low Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Low Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be4"
+  },
+  "classcode": 67,
+  "classname": "Debt - Money Market Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Money Market",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be5"
+  },
+  "classcode": 68,
+  "classname": "Debt - Medium to Long Duration Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Medium to Long Duration",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be6"
+  },
+  "classcode": 69,
+  "classname": "Debt - Dynamic Bond",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Dynamic Bond",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be7"
+  },
+  "classcode": 70,
+  "classname": "Debt - Corporate Bond Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Corporate Bond",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be8"
+  },
+  "classcode": 71,
+  "classname": "Debt - Credit Risk Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Credit Risk Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794be9"
+  },
+  "classcode": 72,
+  "classname": "Debt - Banking and PSU Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Banking and PSU Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bea"
+  },
+  "classcode": 74,
+  "classname": "Hybrid - Dynamic Asset Allocation",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Dynamic Asset Allocation",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794beb"
+  },
+  "classcode": 75,
+  "classname": "Hybrid - Balanced Advantage",
+  "asset_code": 2,
+  "asset_type": "Hybrid",
+  "category": "Balanced Advantage",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bec"
+  },
+  "classcode": 76,
+  "classname": "Solution Oriented - Children's Fund",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "Solution Oriented - Children's Fund",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bed"
+  },
+  "classcode": 77,
+  "classname": "Solution Oriented - Retirement Fund - Debt",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "Solution Oriented - Retirement Fund",
+  "sub_category": "Debt Oriented",
+  "flag": "A",
+  "crondate": {
+    "$date": "2024-08-29T18:07:01.999Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bee"
+  },
+  "classcode": 78,
+  "classname": "Index Funds - Nifty Next 50",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Index Funds",
+  "sub_category": "Index - Nifty Next 50",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bef"
+  },
+  "classcode": 79,
+  "classname": "Index Funds - Other",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Index Funds",
+  "sub_category": "Index Funds - Other",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf0"
+  },
+  "classcode": 80,
+  "classname": "ETFs - Other",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "ETFs - Other",
+  "sub_category": "",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf1"
+  },
+  "classcode": 81,
+  "classname": "FoFs (Domestic) - Equity Oriented",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "FoFs (Domestic)",
+  "sub_category": "Equity Oriented",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf2"
+  },
+  "classcode": 82,
+  "classname": "ETFs - Debt",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "ETFs",
+  "sub_category": "Debt",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf3"
+  },
+  "classcode": 83,
+  "classname": "Equity - Flexi Cap Fund",
+  "asset_code": 1,
+  "asset_type": "Equity",
+  "category": "Flexi Cap Fund",
+  "sub_category": "Flexi Cap Fund",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf4"
+  },
+  "classcode": 84,
+  "classname": "FoFs (Domestic) - Hybrid",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "FoFs (Domestic)",
+  "sub_category": "Hybrid",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf5"
+  },
+  "classcode": 85,
+  "classname": "FoFs (Domestic) - Silver",
+  "asset_code": 4,
+  "asset_type": "Commodity",
+  "category": "FoFs (Domestic)",
+  "sub_category": "Silver",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba32de26bee4c87b794bf6"
+  },
+  "classcode": 86,
+  "classname": "ETFs - Silver",
+  "asset_code": 4,
+  "asset_type": "Commodity",
+  "category": "ETFs",
+  "sub_category": "Silver",
+  "flag": "A",
+  "crondate": {
+    "$date": "2023-07-21T07:25:18.704Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66c77e45a1c42c2309fd4cec"
+  },
+  "classcode": 87,
+  "classname": "Solution Oriented - Retirement Fund - Equity",
+  "asset_code": 5,
+  "asset_type": "Other",
+  "category": "Solution Oriented - Retirement Fund",
+  "sub_category": "Equity Oriented",
+  "flag": "A",
+  "crondate": {
+    "$date": "2024-08-29T18:07:01.999Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682e16bd0027e557909d1c71"
+  },
+  "classcode": 88,
+  "classname": "Debt - Index Fund",
+  "asset_code": 3,
+  "asset_type": "Debt",
+  "category": "Index Funds",
+  "sub_category": "Debt Oriented",
+  "flag": "A",
+  "crondate": {
+    "$date": "2025-05-28T18:09:01.586Z"
+  }
+}]

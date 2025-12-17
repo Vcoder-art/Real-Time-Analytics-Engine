@@ -60,6 +60,7 @@ export default function SettingsDrawer({ open, onClose }) {
 
 
   const logoutFromDashboard = ()=> {
+    setIsLogoutOpen(false)
     dispatch(logout())
     navigate("/login")
   } 
@@ -71,7 +72,7 @@ export default function SettingsDrawer({ open, onClose }) {
       {open && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-40"
-          onClick={onClose}
+          onClick={()=>dispatch(onClose())}
         />
       )}
 
@@ -82,7 +83,7 @@ export default function SettingsDrawer({ open, onClose }) {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">⚙ Settings</h2>
-          <button onClick={onClose}>
+          <button onClick={()=>dispatch(onClose())}>
             <IoIosCloseCircle className="w-6 h-6 text-gray-400 hover:text-white" />
           </button>
         </div>

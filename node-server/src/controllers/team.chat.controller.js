@@ -3,7 +3,6 @@ const MessageModel = require("../models/chat.message.model");
 const { redisHelper } = require("../utils/redis-helper");
 const { ObjectId } = require("mongoose").Types;
 
-
 async function getGroups(req, res) {
   try {
     const companyId = req.companyId;
@@ -48,12 +47,12 @@ async function getInitialMessageByGroup(req, res) {
         text: 1,
         sender: 1,
         senderName: 1,
-        createdAt: 1, 
+        createdAt: 1,
         fileUrl: 1,
         fileName: 1,
-        fileSize:1,
-        type:1, 
-       _id: 0,
+        fileSize: 1,
+        type: 1,
+        _id: 0,
       }
     )
       .sort({ createdAt: 1 }) // oldest first → ideal for initial chat load
@@ -104,9 +103,9 @@ async function fileUploader(req, res) {
       text: "placeholder",
       type: "file",
       senderUserId,
-      fileUrl:`/uploads/${req.file.filename}`,
-      fileName:req.file.originalname,
-      fileSize:req.file.size,
+      fileUrl: `/uploads/${req.file.filename}`,
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
     });
 
     const fileData = {
@@ -117,12 +116,18 @@ async function fileUploader(req, res) {
       senderName,
       groupId,
       type: "file",
-      actionType: "chat_message",
       createdAt: fileMessage.createdAt,
     };
 
     const channel = `chat:group:${groupId}`;
-    redisHelper.redisClient.publish(channel, JSON.stringify(fileData));
+
+    const chatPayload = {
+      actionType: "chat_message",
+      channel,
+      data: fileData,
+    };
+
+    redisHelper.redisClient.publish(channel, JSON.stringify(chatPayload));
 
     return res.json({
       success: true,

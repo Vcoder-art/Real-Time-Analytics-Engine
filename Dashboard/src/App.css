@@ -8,5 +8,13 @@
 
 button{
     color:black;
+    background-color: aliceblue;
 }
 
+a:hover {
+    color:aqua;
+}
+
+a:active {
+    color:white;
+}

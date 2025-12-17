@@ -10,6 +10,10 @@ const EmployeeSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    isActive:{
+      type:Boolean,
+      default:true
+    },
     password: { type: String, required: true, minlength: 6 },
     email: { type: String, required: true, index: true },
     name: { type: String },

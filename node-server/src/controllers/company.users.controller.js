@@ -41,7 +41,7 @@ const initUser = async (req, res) => {
     return res.json({
       success: true,
       userId: newUser.userId,
-      message: "New user created.",
+      msg: "New user created.",
     });
   } catch (err) {
     console.error("User init error:", err);

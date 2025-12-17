@@ -7,37 +7,84 @@ import axiosInstance from "../apis/axiosInstance";
 import toast from "react-hot-toast";
 
 
-
 export default function ChatPanel({ groupId, channel }) {
 
     const [messages, setMessages] = useState([]);
     const { user } = useSelector((state) => state.auth);
+    const [typingUsers, setTypingUsers] = useState({});
     const messagesEndRef = useRef(null);
     const currentUserName = user?.user?.name;
     const currentUserRefId = user?.user?._id;
     const currentUserId = user?.user?.id;
-
+    ``
 
     // connect and subscribe
     useEffect(() => {
         if (groupId && channel) {
-            fetchInitialMessages()
+            fetchInitialMessages();
+
             ws.subscribe(channel, (e) => {
-                if (e.data) {
-                    const data = e.data;
-                    setMessages(prev => [...prev, data]);
+                if (!e.data) return;
+                const evt = e.data;
+                // 🔥 Handle typing events
+                if (e.type === "typing") {
+                    handleTypingEvent(evt);
+                    return;
                 }
-            })
+
+                // 🔥 Normal chat message
+                setMessages(prev => [...prev, evt]);
+            });
         }
+
         return () => {
-            // cleanup
-            try {
-                // ws.send(JSON.stringify({ action: "unsubscribe", channel }));
-            } catch (err) {
-                console.log("Closing Error", err)
-            }
+            // if needed later: ws.unsubscribe(channel)
         };
-    }, [groupId]);
+    }, [groupId, channel]);
+
+
+    const handleTypingEvent = (evt) => {
+        const { userId, userName, state } = evt;
+       
+        console.log("Typing event:", evt);
+
+        setTypingUsers(prev => {
+            const updated = { ...prev };
+
+            if (state === "start") {
+                updated[userId] = {
+                    name: userName,
+                    lastUpdate: Date.now(),
+                };
+            } else {
+                delete updated[userId];
+            }
+
+            return updated;
+        });
+    };
+
+
+
+    // // 🔥 Auto-clear typing after 3 seconds of inactivity
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setTypingUsers(prev => {
+    //             const now = Date.now();
+    //             const updated = {};
+
+    //             Object.keys(prev).forEach(uid => {
+    //                 if (now - prev[uid].lastUpdate < 3000) {
+    //                     updated[uid] = prev[uid];
+    //                 }
+    //             });
+
+    //             return updated;
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(interval);
+    // }, []);
 
     // scroll to bottom when messages change
     useEffect(() => {
@@ -91,7 +138,7 @@ export default function ChatPanel({ groupId, channel }) {
                     "Content-Type": "multipart/form-data",
                 }
             })
-            
+
         } catch (err) {
             console.log(err)
             toast.error("Failed to upload file.");
@@ -118,11 +165,30 @@ export default function ChatPanel({ groupId, channel }) {
                 {messages.map((m, idx) => (
                     <MessageItem key={idx + "-" + (m.timestamp || idx)} msg={m} isOwn={m.sender === currentUserRefId} />
                 ))}
+
+
+                {/* 🔥 TYPING INDICATOR */}
+                {Object.keys(typingUsers).length > 0 && (
+                    <div className="text-gray-400 text-sm italic px-4 animate-pulse">
+                        {Object.values(typingUsers)
+                            .map(u => u.name)
+                            .join(", ")}{" "}
+                        {Object.keys(typingUsers).length > 1 ? "are" : "is"} …
+                    </div>
+                )}
+
                 <div ref={messagesEndRef} />
             </div>
 
             {/* Composer */}
-            <Composer onSendMessage={sendMessage} onSendFile={sendFile} />
+            <Composer
+                channel={channel}
+                currentUserName={currentUserName}
+                userId={currentUserId}
+                onSendMessage={sendMessage}
+                onSendFile={sendFile}
+                ws={ws.ws}
+            />
         </div>
     );
 }

@@ -18,7 +18,7 @@ class WebSocketService {
       this.ws.onmessage = (msg) => {
         try {
           const data = JSON.parse(msg.data);
-          console.log(data);
+          // console.log(data);
           // if(data?.type !== "QUERIED_DATA") {
           //    return console.log(data);
           // }

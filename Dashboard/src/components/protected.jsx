@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import ProtectedLayout from "../layout/protected-layout"
 
 export default function ProtectedRoute() {
   const { user } = useSelector((state) => state.auth);
@@ -10,5 +11,5 @@ export default function ProtectedRoute() {
   }
 
   // If user exists, render child routes (like /dashboard)
-  return <Outlet />;
+  return <ProtectedLayout><Outlet /></ProtectedLayout>;
 }

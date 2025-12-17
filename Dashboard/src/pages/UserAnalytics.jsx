@@ -1,6 +1,5 @@
 
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux"
 import { useEffect, useState } from "react";
 import VisionEye from "../assets/icons-eye.png";
 import axios from "../apis/axiosInstance"
@@ -17,7 +16,6 @@ export default function UserAnalytics() {
     const [activity, setActivity] = useState([]);
     const [breakdown, setBreakdown] = useState([]);
     const [recentEvents, setRecentEvents] = useState([]);
-    const { user } = useSelector((state) => state.auth);
     const { appId, userId, channel } = useParams();
 
 
@@ -61,20 +59,7 @@ export default function UserAnalytics() {
     };
 
     return (
-        <div style={{ width: "118%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
-            {/* Header */}
-            <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-gray-900/70 backdrop-blur-md">
-                <h3 className="text-2xl font-semibold flex items-center gap-2">
-                    <img width={50} height={50} src={VisionEye} />
-                    Vision Pro
-                </h3>
-
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-400">
-                        {user?.user?.email || "Anonymous"}
-                    </span>
-                </div>
-            </header>
+        <div  className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
 
             {/* Body */}
             <main className="flex-1 grid grid-cols-12 gap-6 p-8">

@@ -1,5 +1,6 @@
 const EmployeeModel = require("../models/employee.model");
 const { generateUserId } = require("../utils/generateId");
+const { Types } = require("mongoose");
 const ChatGroup = require("../models/chat.group.model");
 
 async function addEmployee(req, res) {
@@ -90,7 +91,10 @@ async function addEmployee(req, res) {
 }
 
 async function getEmployee(req, res) {
-  const data = await EmployeeModel.find({ companyId: req.companyId },{_id:0,password:0});
+  const data = await EmployeeModel.find(
+    { companyId: req.companyId },
+    { _id: 0, password: 0 }
+  );
   return res.json({
     msg: "Fetch employees successfully.",
     success: true,
@@ -98,7 +102,38 @@ async function getEmployee(req, res) {
   });
 }
 
+async function activateOrDeactivateEmployee(req, res) {
+  const { employeeId, status } = req.body;
+
+  if (!employeeId) {
+    return res
+      .status(400)
+      .json({ msg: "Invalid Employee id.", success: false });
+  }
+
+  if (status !== "activate" && status !== "deactivate") {
+    return res
+      .status(400)
+      .json({ msg: "Invalid status code.", success: false });
+  }
+
+  try {
+    const result = status === "activate" ? true : false;
+    await EmployeeModel.findOneAndUpdate(
+      { userId: employeeId },
+      { isActive: result }
+    );
+    return res.json({ msg: `Employee ${status} successfully.`, success: true });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ msg: "Failed to update employee.", success: false });
+  }
+}
+
 module.exports = {
   addEmployee,
   getEmployee,
+  activateOrDeactivateEmployee,
 };

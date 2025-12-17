@@ -25,20 +25,9 @@ export default function MeetingRoom() {
     }, [])
 
     return (
-        <div style={{ width: "194%" }} className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+        <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-gray-900/70 backdrop-blur-md">
-                <h3 className="text-2xl font-semibold flex items-center gap-2">
-                    <img width={50} height={50} src={VisionEye} />
-                    Vision Pro
-                </h3>
-
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-400">
-                        {user?.user?.email || "Anonymous"}
-                    </span>
-                </div>
-            </header>
+       
 
             {/* Body */}
             <main className="flex-1 grid grid-cols-12 gap-6 p-8">

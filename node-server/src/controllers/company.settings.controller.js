@@ -12,7 +12,7 @@ const getCompanySettings = async (req, res) => {
     };
     res.json(payload);
   } catch (err) {
-    res.status(500).json({ message: "Failed to get settings." });
+    res.status(500).json({ msg: "Failed to get settings." });
   }
 };
 

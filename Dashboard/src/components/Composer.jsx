@@ -1,36 +1,113 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
-export default function Composer({ onSendMessage, onSendFile, disabled }) {
+export default function Composer({
+  onSendMessage,
+  onSendFile,
+  disabled,
+  ws,
+  userId,
+  currentUserName,
+  channel
+}) {
   const [text, setText] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const handleInput = (e) => setText(e.target.value);
+  // typing state tracker
+  const typingRef = useRef({
+    state: "stopped",
+    timer: null
+  });
 
-  const handleSend = () => {
-    const trimmed = text.trim();
+  const TYPING_STOP_DELAY = 1500;
 
-    // Case 1 → sending file only
-    if (selectedFile && !trimmed) {
-      onSendFile(selectedFile);
-      setSelectedFile(null);
-      fileInputRef.current.value = "";
+  // -------------------------------
+  // 🔤 Handle input + typing logic
+  // -------------------------------
+  const handleInput = (e) => {
+    setText(e.target.value);
+    handleTyping();
+  };
+
+  // -------------------------------
+  // 💬 Manage typing start/stop
+  // -------------------------------
+  const handleTyping = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    // 1️⃣ If not already typing -> send start
+    if (typingRef.current.state === "stopped") {
+      typingRef.current.state = "running";
+
+      ws.send(
+        JSON.stringify({
+          action: "typing",
+          state: "start",
+          channel,
+          userId,
+          senderName: currentUserName,
+        })
+      );
+    }
+
+    // 2️⃣ Reset stop-timer
+    if (typingRef.current.timer) clearTimeout(typingRef.current.timer);
+
+    typingRef.current.timer = setTimeout(() => {
+      typingRef.current.state = "stopped";
+      typingRef.current.timer = null;
+
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            action: "typing",
+            state: "stop",
+            channel,
+            userId,
+            senderName: currentUserName,
+          })
+        );
+      }
+    }, TYPING_STOP_DELAY);
+  };
+
+  // -------------------------------
+  // 📎 Handle file selection
+  // -------------------------------
+  const handleFilePick = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File too large (max 10MB)");
       return;
     }
 
-    // Case 2 → sending text only
+    setSelectedFile(file);
+  };
+
+  // -------------------------------
+  // 📤 Send message or file
+  // -------------------------------
+  const handleSend = () => {
+    const trimmed = text.trim();
+
+    // FILE ONLY
+    if (selectedFile && !trimmed) {
+      onSendFile(selectedFile);
+      clearFile();
+      stopTypingImmediate();
+      return;
+    }
+
+    // TEXT ONLY
     if (trimmed) {
       onSendMessage(trimmed);
       setText("");
+      stopTypingImmediate();
     }
-
-    // // Case 3 → sending both file + text
-    // if (selectedFile && trimmed) {
-    //   onSendFile(selectedFile);
-    //   setSelectedFile(null);
-    //   fileInputRef.current.value = "";
-    // }
 
     textareaRef.current?.focus();
   };
@@ -42,28 +119,53 @@ export default function Composer({ onSendMessage, onSendFile, disabled }) {
     }
   };
 
-  const handleFilePick = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setSelectedFile(file);
+  // -------------------------------
+  // 🛑 Stop typing immediately
+  // -------------------------------
+  const stopTypingImmediate = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    if (typingRef.current.timer) clearTimeout(typingRef.current.timer);
+
+    typingRef.current.state = "stopped";
+    typingRef.current.timer = null;
+
+    ws.send(
+      JSON.stringify({
+        action: "typing",
+        state: "stop",
+        channel,
+        userId,
+        senderName: currentUserName,
+      })
+    );
   };
+
+  // -------------------------------
+  // ❌ Clear selected file
+  // -------------------------------
+  const clearFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // -------------------------------
+  // 🧹 Cleanup on unmount
+  // -------------------------------
+  useEffect(() => {
+    return () => stopTypingImmediate();
+  }, []);
 
   return (
     <div className="p-3 bg-gray-900 border-t border-gray-800 flex flex-col gap-2">
 
-      {/* File Preview */}
+      {/* FILE PREVIEW */}
       {selectedFile && (
         <div className="flex items-center justify-between bg-gray-800 p-2 rounded-md">
-          <span className="text-gray-300 text-sm">
+          <span className="text-gray-300 text-sm truncate">
             📎 {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
           </span>
-          <button
-            onClick={() => {
-              setSelectedFile(null);
-              fileInputRef.current.value = "";
-            }}
-            className="text-red-400 hover:text-red-300"
-          >
+          <button onClick={clearFile} className="text-red-400 hover:text-red-300 text-lg">
             ✕
           </button>
         </div>
@@ -71,7 +173,7 @@ export default function Composer({ onSendMessage, onSendFile, disabled }) {
 
       <div className="flex gap-3 items-end">
 
-        {/* File Button */}
+        {/* FILE PICKER */}
         <label className="cursor-pointer bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-700">
           📁
           <input
@@ -83,7 +185,7 @@ export default function Composer({ onSendMessage, onSendFile, disabled }) {
           />
         </label>
 
-        {/* Text Box */}
+        {/* TEXT BOX */}
         <textarea
           ref={textareaRef}
           value={text}
@@ -95,7 +197,7 @@ export default function Composer({ onSendMessage, onSendFile, disabled }) {
           className="resize-none w-full bg-gray-800 text-gray-100 placeholder-gray-500 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
 
-        {/* Send Button */}
+        {/* SEND BUTTON */}
         <button
           onClick={handleSend}
           disabled={disabled || (!text.trim() && !selectedFile)}
