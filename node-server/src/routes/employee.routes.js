@@ -5,6 +5,7 @@ const {
   addEmployee,
   getEmployee,
   activateOrDeactivateEmployee,
+  searchEmployee,
 } = require("../controllers/employee.controller");
 
 router.post(
@@ -25,5 +26,7 @@ router.post(
   roleMiddleware("admin"),
   activateOrDeactivateEmployee
 );
+
+router.get("/search", authMiddleware, searchEmployee);
 
 module.exports = router;

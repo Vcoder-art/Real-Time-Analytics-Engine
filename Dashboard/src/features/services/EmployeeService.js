@@ -15,3 +15,8 @@ export const addEmployee = async (employeeDetails) => {
 export const activateOrDeactivate = async (requestBody) => {
   await axios.post(url + "/activate-or-deactivate",requestBody);
 }
+
+export const searchEmployee = async (query) => {
+  const response = await axios.get(url + `/search?q=${query}`)
+  return response.data
+}

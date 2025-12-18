@@ -9,4 +9,5 @@ router.use("/settings",require("./company.settings.routes"));
 router.use("/company-users",require("./company.users.routes"));
 router.use("/employee",require("./employee.routes"));
 router.use("/chat",require("./chat.routes"))
+router.use("/mail",require("./mail.routes"))
 module.exports = router

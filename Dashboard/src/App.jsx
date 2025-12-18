@@ -1,5 +1,5 @@
 import "./App.css"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/protected";
@@ -14,6 +14,7 @@ import Employees from "./pages/Employees"
 import SettingsComponent from "./pages/Settings"
 import { closeSettings } from "./features/slices/authSlice"
 import { useSelector } from "react-redux"
+import Mail from "./pages/Mail"
 
 export default function App() {
 
@@ -42,8 +43,9 @@ export default function App() {
             <Route path="/user/:appId/:userId/:channel" element={<UserAnalytics />} />
             <Route path="/meeting-room" element={<MeetingRoom />} />
             <Route path="/employees" element={<Employees />} />
+            <Route path="/mail" element={<Mail/>} />
           </Route>
-
+  
         </Routes>
 
       </BrowserRouter>

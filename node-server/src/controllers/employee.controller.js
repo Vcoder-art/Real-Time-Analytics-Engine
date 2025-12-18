@@ -1,6 +1,5 @@
 const EmployeeModel = require("../models/employee.model");
 const { generateUserId } = require("../utils/generateId");
-const { Types } = require("mongoose");
 const ChatGroup = require("../models/chat.group.model");
 
 async function addEmployee(req, res) {
@@ -132,8 +131,41 @@ async function activateOrDeactivateEmployee(req, res) {
   }
 }
 
+async function searchEmployee(req, res) {
+  const { q } = req.query;
+  const companyId = req.user.companyId;
+
+  if (!q || q.trim().length < 2) {
+    return res.json({ users: [] });
+  }
+
+  try {
+    const regex = new RegExp(q, "i");
+    const users = await EmployeeModel.find({
+      companyId,
+      $or: [{ name: regex }, { email: regex }],
+    })
+      .select("name email userId")
+      .limit(10)
+      .lean();
+
+    res.json({
+      success: true,
+      msg: "fetch users successfully.",
+      users,
+    });
+  } catch (err) {
+    console.error("Search Employee error:", err);
+    res.status(500).json({
+      success: false,
+      msg: "Failed to search employees",
+    });
+  }
+}
+
 module.exports = {
   addEmployee,
   getEmployee,
   activateOrDeactivateEmployee,
+  searchEmployee
 };

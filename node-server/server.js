@@ -11,6 +11,8 @@ const http = require("http");
 const app = express();
 const server = http.createServer(app);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/mail-uploads', express.static(path.join(__dirname, 'mail-uploads')));
+
 console.log(__dirname)
 
 

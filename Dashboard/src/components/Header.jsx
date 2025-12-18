@@ -53,6 +53,17 @@ function Header() {
                         Dashboard
                     </NavLink>
 
+                    <NavLink
+                        to="/mail"
+                        end
+                        className={({ isActive }) =>
+                            `${linkBase} ${isActive ? activeLink : inactiveLink}`
+                        }
+                    >
+                        Mails
+                    </NavLink>
+
+
                     <span className="text-sm text-gray-400">
                         {user?.user?.email || "Anonymous"}
                     </span>
