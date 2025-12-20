@@ -1,14 +1,13 @@
 const MailMessage = require("../models/mail.message.model");
 const EmployeeModel = require("../models/employee.model");
 
-
 // sent mail to the users
 const sendMail = async (req, res) => {
   try {
-    const { subject, body } = req.body;
+    const { subject, body, content } = req.body;
     const companyId = req.companyId;
     const sender = req.user;
-    const to = JSON.parse(req.body.to)
+    const to = JSON.parse(req.body.to);
 
     if (!to || !Array.isArray(to) || to.length === 0) {
       return res.status(400).json({ msg: "Recipients required" });
@@ -56,6 +55,7 @@ const sendMail = async (req, res) => {
       body,
       attachments,
       status: "sent",
+      plainText: content,
     });
 
     return res.json({
@@ -75,13 +75,25 @@ const getInbox = async (req, res) => {
     const companyId = req.companyId;
     const userId = req.user.userId;
 
-    const mails = await MailMessage.find({
+    let mails = await MailMessage.find({
       companyId,
       "to.userId": userId,
     })
       .sort({ createdAt: -1 })
       .select("-body")
       .lean();
+
+    mails = mails.map((el) => {
+      if (el.plainText) {
+        el.plainText = el.plainText
+          .replace(/[\n\r]+/g, " ") // Replace one or more newlines/returns with a single space
+          .trim() // Remove leading/trailing whitespace
+          .substring(0, 50); // Take first 50 characters
+      } else {
+        el.plainText = "";
+      }
+      return el;
+    });
 
     return res.json({
       success: true,
@@ -96,12 +108,26 @@ const getSent = async (req, res) => {
     const companyId = req.companyId;
     const userId = req.user.userId;
 
-    const mails = await MailMessage.find({
+    let mails = await MailMessage.find({
       companyId,
       "from.userId": userId,
-    }).select("to subject body attachments status readBy")
+    })
+      .select("to from subject body attachments status readBy createdAt plainText")
       .sort({ createdAt: -1 })
       .lean();
+
+    // Clean and truncate plainText
+    mails = mails.map((el) => {
+      if (el.plainText) {
+        el.plainText = el.plainText
+          .replace(/[\n\r]+/g, " ") // Replace one or more newlines/returns with a single space
+          .trim() // Remove leading/trailing whitespace
+          .substring(0, 50); // Take first 50 characters
+      } else {
+        el.plainText = "";
+      }
+      return el;
+    });
 
     res.json({
       msg: "Fetch sent mails successfully",

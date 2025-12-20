@@ -1,27 +1,26 @@
-import React from 'react';
-import { MdAttachEmail, MdInbox } from "react-icons/md";
+import { MdAttachEmail } from "react-icons/md";
 import { IoMdMail } from "react-icons/io";
 
-function InboxList({ mails = [], onSelect }) {
-    // Fallback UI for Empty Inbox
-    if (mails.length === 0) {
+function SentBoxList({ mails, onSelect }) {
+    
+    const renderRecipients = (recipients) => {
+        if (!recipients || recipients.length === 0) return "No Recipients";
+        if (recipients.length === 1) return recipients[0].name || recipients[0].email;
+
+        const firstTwo = recipients.slice(0, 2).map(r => r.name.split(' ')[0]).join(", ");
+        const remaining = recipients.length - 2;
+        
         return (
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-500 opacity-60 bg-gray-900">
-                <MdInbox size={64} className="mb-3" />
-                <h5 className="font-medium text-lg">Your inbox is empty</h5>
-                <p className="text-sm text-gray-600">When you receive emails, they will appear here.</p>
-            </div>
+            <span className="flex items-center gap-1">
+                {firstTwo} {remaining > 0 && <span className="text-blue-400 text-xs font-bold">+{remaining}</span>}
+            </span>
         );
-    }
+    };
 
     return (
         <div className="flex-1 overflow-y-auto bg-gray-900">
-            {/* Synchronized Header */}
-            <h4 className="px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-bold border-b border-gray-800 sticky top-0 bg-gray-900/80 backdrop-blur-md z-10">
-                Inbox 
-                <span className="ml-2 text-[10px] bg-gray-800 px-2 py-0.5 rounded-full text-gray-400">
-                    {mails.length}
-                </span>
+            <h4 className="px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-bold border-b border-gray-800">
+                Sent Messages
             </h4>
 
             {mails.map((mail) => (
@@ -30,16 +29,15 @@ function InboxList({ mails = [], onSelect }) {
                     onClick={() => onSelect(mail)}
                     className="group px-6 py-4 border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer transition-colors relative"
                 >
-                    {/* Header: Sender + Date */}
+                    {/* Header: Recipients + Date */}
                     <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-3">
-                            {/* Avatar Circle (Same as SentBox) */}
                             <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xs font-bold">
-                                {mail.from?.name?.charAt(0).toUpperCase() || "?"}
+                                {mail.to[0]?.name?.charAt(0).toUpperCase() || "?"}
                             </div>
                             
                             <span className="font-semibold text-gray-100 group-hover:text-blue-400 transition-colors">
-                                {mail.from?.name || "Unknown Sender"}
+                                {renderRecipients(mail.to)}
                             </span>
                         </div>
                         
@@ -48,18 +46,17 @@ function InboxList({ mails = [], onSelect }) {
                         </span>
                     </div>
 
-                    {/* Subject + PlainText Row (Mirrored Layout) */}
+                    {/* Subject Row */}
                     <div className="flex items-start justify-between pl-11">
                         <div className="flex flex-col flex-1 min-w-0">
-                            {/* Subject */}
                             <span className="text-sm text-gray-200 font-medium truncate">
                                 {mail.subject || "(No Subject)"}
                             </span>
                             
-                            {/* PlainText Preview */}
-                            <p className="text-xs text-gray-500 truncate mt-0.5 leading-relaxed">
-                                {mail.plainText ? `${mail.plainText}...` : ""}
-                            </p>
+                            {/* NEW: PlainText Preview */}
+                            <span className="text-xs text-gray-500 truncate mt-0.5">
+                                {mail.plainText ? `${mail.plainText}...` : "No additional text"}
+                            </span>
                         </div>
 
                         {/* Status/Attachment Icons */}
@@ -76,8 +73,15 @@ function InboxList({ mails = [], onSelect }) {
                     </div>
                 </div>
             ))}
+            
+            {mails.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-64 text-gray-600">
+                    <IoMdMail size={48} className="mb-2 opacity-20" />
+                    <p className="text-sm">No sent messages found</p>
+                </div>
+            )}
         </div>
     );
 }
 
-export default InboxList;
+export default SentBoxList;

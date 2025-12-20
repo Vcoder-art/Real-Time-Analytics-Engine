@@ -46,6 +46,11 @@ const MailMessageSchema = new mongoose.Schema(
       required: true,
     },
 
+    plainText:{
+      type:String,
+      required:true
+    },
+
     attachments: [AttachmentSchema],
 
     status: {

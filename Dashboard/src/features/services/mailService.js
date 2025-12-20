@@ -8,3 +8,12 @@ export const getInboxMails = async () => {
  const data = await  axiosInstance.get(url+"/inbox")
  return data.data
 }
+
+export const sentMail = async (mailDetails) => {
+  await axiosInstance.post(url+"/send", mailDetails)
+}
+
+export const getSentMails = async () => {
+  const response = await axiosInstance.get(url+"/sent")
+  return response.data;
+}
