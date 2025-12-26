@@ -1,5 +1,6 @@
 const MailMessage = require("../models/mail.message.model");
 const EmployeeModel = require("../models/employee.model");
+const mongoose = require("mongoose")
 
 // sent mail to the users
 const sendMail = async (req, res) => {
@@ -27,12 +28,15 @@ const sendMail = async (req, res) => {
     }
 
     //handle attachments
+    console.log("req.file",req.files)
     const attachments = (req.files || []).map((file) => ({
-      fileName: file.originalName,
+      fileName: file.originalname,
       fileUrl: `/mail-uploads/${file.filename}`,
       mimeType: file.mimetype,
       size: file.size,
     }));
+   
+    console.log(attachments);
 
     const mail = await MailMessage.create({
       companyId,
@@ -107,37 +111,75 @@ const getSent = async (req, res) => {
   try {
     const companyId = req.companyId;
     const userId = req.user.userId;
+    
+    console.log("companyId",companyId);
+    console.log("userId",userId);
 
-    let mails = await MailMessage.find({
-      companyId,
-      "from.userId": userId,
-    })
-      .select("to from subject body attachments status readBy createdAt plainText")
-      .sort({ createdAt: -1 })
-      .lean();
 
-    // Clean and truncate plainText
-    mails = mails.map((el) => {
-      if (el.plainText) {
-        el.plainText = el.plainText
-          .replace(/[\n\r]+/g, " ") // Replace one or more newlines/returns with a single space
-          .trim() // Remove leading/trailing whitespace
-          .substring(0, 50); // Take first 50 characters
-      } else {
-        el.plainText = "";
-      }
-      return el;
-    });
+    const mails = await MailMessage.aggregate([
+      {
+        $match: {
+          companyId:new mongoose.Types.ObjectId(companyId),
+          "from.userId": userId,
+        },
+      },
+
+      { $sort: { createdAt: -1 } },
+
+      {
+        $lookup: {
+          from: "employees", // Mongo collection name
+          localField: "readBy",
+          foreignField: "userId",
+          as: "readByDetails",
+        },
+      },
+
+      {
+        $project: {
+          to: 1,
+          from: 1,
+          subject: 1,
+          body: 1,
+          attachments: 1,
+          status: 1,
+          plainText: 1,
+          createdAt: 1,
+
+          readBy: {
+            $map: {
+              input: "$readByDetails",
+              as: "u",
+              in: {
+                userId: "$$u.userId",
+                name: "$$u.name",
+                email: "$$u.email",
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    // Clean + truncate plainText
+    const cleaned = mails.map((el) => ({
+      ...el,
+      plainText: el.plainText
+        ? el.plainText.replace(/[\n\r]+/g, " ").trim().substring(0, 50)
+        : "",
+    }));
 
     res.json({
       msg: "Fetch sent mails successfully",
       success: true,
-      data: mails,
+      data: cleaned,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Failed to fetch sent mails" });
   }
 };
+
 
 //Read Mail API (Mark as Read)
 const getMailById = async (req, res) => {

@@ -16,7 +16,7 @@ export default function MeetingRoom() {
 
     useEffect(() => {
         const fetchMeetingGroup = async () => {
-            const response = await axiosInstance.get("http://localhost:4000/api/chat/get-group")
+            const response = await axiosInstance.get("http://192.168.18.109:4000/api/chat/get-group")
             setGroup(response.data.group)
         }
 

@@ -17,3 +17,8 @@ export const getSentMails = async () => {
   const response = await axiosInstance.get(url+"/sent")
   return response.data;
 }
+
+export const readMailById = async (id)=> {
+  const response = await axiosInstance.get(`${url}/${id}`)
+  return response.data;
+}

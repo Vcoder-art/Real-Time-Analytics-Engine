@@ -1,8 +1,6 @@
 import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "../components/Button"
 import { useEffect } from "react";
-import VisionEye from "../assets/icons-eye.png";
 import UsersList from "../components/UsersList"
 
 export default function Users() {

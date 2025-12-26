@@ -56,7 +56,7 @@ export default function MessageItem({ msg, isOwn }) {
             {/* File Type Previews */}
             {fileType === "image" && (
               <img
-                src={"http://localhost:4000" + msg.fileUrl}
+                src={"http://192.168.18.109:4000" + msg.fileUrl}
                 alt="sent file"
                 className="max-h-60 rounded-lg border border-gray-700"
               />
@@ -66,7 +66,7 @@ export default function MessageItem({ msg, isOwn }) {
               <div className="bg-gray-700 p-3 rounded-md text-sm flex items-center justify-between">
                 <span>📽️ {msg.fileName}</span>
                 <a
-                  href={"http://localhost:4000" + msg.fileUrl}
+                  href={"http://192.168.18.109:4000" + msg.fileUrl}
                   download
                   className="px-2 py-1  text-white rounded text-xs"
                 >
@@ -79,7 +79,7 @@ export default function MessageItem({ msg, isOwn }) {
               <div className="bg-gray-700 p-3 rounded-md text-sm flex items-center justify-between">
                 <span>📄 {msg.fileName}</span>
                 <a
-                  href={"http://localhost:4000" + msg.fileUrl}
+                  href={"http://192.168.18.109:4000" + msg.fileUrl}
                   download
                   className="px-2 py-1 text-white rounded text-xs"
                 >
@@ -93,7 +93,7 @@ export default function MessageItem({ msg, isOwn }) {
               <div className="bg-gray-700 p-3 rounded-md text-sm flex justify-between items-center">
                 <span>📎 {msg.fileName}</span>
                 <a
-                  href={"http://localhost:4000" + msg.fileUrl}
+                  href={"http://192.168.18.109:4000" + msg.fileUrl}
                   download
                   className="px-2 py-1  text-white rounded text-xs"
                 >

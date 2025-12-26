@@ -2,7 +2,8 @@ import MailSidebar from "../components/MailSidebar";
 import ComposeMail from "../components/ComposeEmail";
 import InboxList from "../components/InboxList"
 import SentBoxList from "../components/SentBoxList";
-import SentMailDetailView from "../components/mailDetails";
+import InboxMailDetailView from "../components/InboxDetailView";
+import SentMailDetailsView from "../components/SentBoxDetailsView";
 import { useState } from "react"
 import { getInboxMails, sentMail, getSentMails } from "../features/services/mailService"
 import { useEffect } from "react";
@@ -17,13 +18,22 @@ export default function Mail() {
     const [inboxList, setInboxList] = useState([])
     const [sentMails, setSentMails] = useState([])
     const [showCompose, setShowCompose] = useState(false);
-    const [selectedSentMail, setSelectedSentMail] = useState("")
+    const [selectedSentMail, setSelectedSentMail] = useState("");
+    const [selectedInboxMail, setSelectedInboxMail] = useState("");
+
 
     const fetchDetails = async () => {
         const preFetchInboxMails = await getInboxMails()
         const prefetchSentMails = await getSentMails();
         setInboxList(preFetchInboxMails.data);
         setSentMails(prefetchSentMails.data);
+    }
+    
+    const reloadActiveView = (view)=> {
+        fetchDetails();
+        setActiveView(view);
+        setSelectedSentMail("");
+        setSelectedInboxMail("");
     }
 
 
@@ -32,13 +42,18 @@ export default function Mail() {
     }, [])
 
     const renderContent = () => {
+
+        if(selectedSentMail || selectedInboxMail) {
+            return null
+        }
+
         switch (activeView) {
             case "compose":
                 return <ComposeMail />;
             case "sent":
                 return <SentBoxList onSelect={setSelectedSentMail} mails={sentMails} />
             default:
-                return <InboxList mails={inboxList} onSelect={() => { }} />;
+                return <InboxList mails={inboxList} onSelect={setSelectedInboxMail} />;
         }
     };
 
@@ -87,7 +102,7 @@ export default function Mail() {
                         />
                     </div>
 
-                    <MailSidebar active={activeView} onChange={setActiveView} />
+                    <MailSidebar active={activeView} onChange={reloadActiveView} />
                 </aside>
 
 
@@ -105,11 +120,20 @@ export default function Mail() {
                         </button>
                     </div>
 
-                    {!selectedSentMail && renderContent()}
+                   {renderContent()}
                     {selectedSentMail && (
-                        <SentMailDetailView
+                        <SentMailDetailsView
                             onBack={() => setSelectedSentMail(null)}
                             mail={selectedSentMail}
+                          
+                        />
+                    )}
+
+                    {selectedInboxMail && (
+                        <InboxMailDetailView
+                            setShowCompose={setShowCompose}
+                            onBack={() => setSelectedInboxMail(null)}
+                            id={selectedInboxMail._id}
                         />
                     )}
 

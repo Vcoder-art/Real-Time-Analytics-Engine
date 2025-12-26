@@ -94,7 +94,7 @@ export default function ChatPanel({ groupId, channel }) {
 
     const fetchInitialMessages = async () => {
         try {
-            const response = await axiosInstance.get(`http://localhost:4000/api/chat/get-initial-messages/${groupId}`)
+            const response = await axiosInstance.get(`http://192.168.18.109:4000/api/chat/get-initial-messages/${groupId}`)
             setMessages(response.data.data)
         } catch (err) {
             console.log(err)
@@ -133,7 +133,7 @@ export default function ChatPanel({ groupId, channel }) {
         formData.append("senderName", currentUserName);
         formData.append("senderUserId", currentUserId);
         try {
-            await axiosInstance.post(`http://localhost:4000/api/chat/upload-file`, formData, {
+            await axiosInstance.post(`http://192.168.18.109:4000/api/chat/upload-file`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 }

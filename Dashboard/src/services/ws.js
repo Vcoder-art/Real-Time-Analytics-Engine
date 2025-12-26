@@ -9,7 +9,7 @@ class WebSocketService {
       if (this.ws && this.ws.readyState === WebSocket.OPEN)
         return res("You Already Connected.");
 
-      this.ws = new WebSocket("ws://localhost:4000");
+      this.ws = new WebSocket("ws://192.168.18.109:4000");
       this.ws.onopen = () => res("WS Connected");
 
       this.ws.onclose = () => console.log("WS Disconnected");
